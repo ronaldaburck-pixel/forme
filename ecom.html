@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FORME — Wear Your Life</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blk:#0a0a0a;--wht:#fafaf8;--cream:#f5f0e8;--border:#e8e2d8;
+  --accent:#c4a882;--accent-dark:#9d7f5e;--mid:#8a8680;--textl:#6b6560;
+  --wa:#25D366;--serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;--tr:0.22s ease;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--wht);color:#1a1814;overflow-x:hidden;line-height:1.5}
+button{cursor:pointer;border:none;background:none;font-family:var(--sans)}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+img{max-width:100%;display:block}
+
+/* ANNOUNCEMENT */
+.ann{background:var(--blk);color:var(--wht);text-align:center;padding:9px 16px;font-size:11px;letter-spacing:.08em}
+.ann span{color:var(--accent);margin:0 6px}
+
+/* HEADER */
+.hdr{background:rgba(250,250,248,.97);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:62px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.logo{font-family:var(--serif);font-size:26px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;cursor:pointer}
+.logo em{font-style:italic;color:var(--accent-dark)}
+.hnav{display:flex;gap:28px}
+.hnav a{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;color:var(--textl);transition:color var(--tr);cursor:pointer;position:relative}
+.hnav a::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:1px;background:var(--blk);transition:width var(--tr)}
+.hnav a:hover{color:var(--blk)}
+.hnav a:hover::after{width:100%}
+.cart-btn{display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;padding:8px 16px;border:1px solid var(--blk);transition:all var(--tr)}
+.cart-btn:hover{background:var(--blk);color:var(--wht)}
+.cbadge{background:var(--accent);color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:600}
+.hamburger{display:none;flex-direction:column;gap:5px;padding:4px;cursor:pointer}
+.hamburger span{display:block;width:22px;height:1.5px;background:var(--blk)}
+.mobile-nav{display:none;flex-direction:column;background:var(--wht);border-top:1px solid var(--border);padding:24px;gap:18px}
+.mobile-nav a{font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;color:#1a1814;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.mobile-nav.open{display:flex}
+
+/* PAGES */
+.page{display:none}
+.page.active{display:block}
+
+/* HERO — full background image */
+.hero{min-height:92vh;position:relative;display:flex;align-items:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(8,8,8,.78) 0%,rgba(8,8,8,.5) 55%,rgba(8,8,8,.15) 100%)}
+.hero-content{position:relative;z-index:2;padding:0 64px;max-width:680px}
+.hero-eye{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:500;margin-bottom:20px}
+.hero h1{font-family:var(--serif);font-size:clamp(52px,7vw,110px);font-weight:300;line-height:.92;letter-spacing:-.01em;margin-bottom:28px;color:#fff}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.7);max-width:400px;line-height:1.75;margin-bottom:36px;font-weight:300}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px}
+.hero-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);padding:18px 22px;max-width:260px;backdrop-filter:blur(12px)}
+.hero-card p{font-size:11px;color:rgba(255,255,255,.55);margin-bottom:4px}
+.hero-card strong{font-size:22px;font-family:var(--serif);font-weight:400;color:#fff}
+.hbadges{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.hbadge{font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.7)}
+
+/* BUTTONS */
+.btn-blk{display:inline-flex;align-items:center;gap:7px;background:var(--wht);color:var(--blk);padding:13px 26px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;transition:all var(--tr);border:none;cursor:pointer;font-family:var(--sans)}
+.btn-blk:hover{background:var(--cream);transform:translateY(-1px)}
+.btn-out{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.6);color:#fff;padding:13px 26px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;transition:all var(--tr);cursor:pointer;font-family:var(--sans);background:transparent}
+.btn-out:hover{background:rgba(255,255,255,.15)}
+/* Dark button variant for non-hero sections */
+.btn-dark{display:inline-flex;align-items:center;gap:7px;background:var(--blk);color:var(--wht);padding:13px 26px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;transition:all var(--tr);border:none;cursor:pointer;font-family:var(--sans)}
+.btn-dark:hover{background:#333;transform:translateY(-1px)}
+
+/* STRIP */
+.strip{background:var(--blk);color:var(--wht);padding:14px 24px;display:flex;justify-content:center;gap:40px;flex-wrap:wrap}
+.strip-item{font-size:11px;letter-spacing:.06em;display:flex;align-items:center;gap:7px}
+
+/* SECTIONS */
+.sec{padding:72px 32px}
+.sec-hdr{text-align:center;margin-bottom:44px}
+.sec-eye{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--mid);font-weight:500;margin-bottom:10px}
+.sec-hdr h2{font-family:var(--serif);font-size:clamp(30px,5vw,50px);font-weight:300;letter-spacing:-.01em;line-height:1.1}
+.sec-hdr h2 em{font-style:italic;color:var(--accent-dark)}
+.sec-hdr p{margin-top:12px;color:var(--textl);font-size:14px;font-weight:300;max-width:440px;margin-left:auto;margin-right:auto}
+
+/* LIFESTYLE GRID */
+.life-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;max-width:1240px;margin:0 auto}
+.life-card{position:relative;aspect-ratio:3/4;overflow:hidden;cursor:pointer}
+.life-img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+.life-card:hover .life-img{transform:scale(1.05)}
+.life-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.75) 0%,rgba(10,10,10,.1) 55%,transparent 100%)}
+.life-txt{position:absolute;bottom:0;left:0;right:0;padding:26px 22px;color:var(--wht)}
+.life-cat{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:5px}
+.life-txt h3{font-family:var(--serif);font-size:24px;font-weight:300;margin-bottom:8px}
+.life-link{font-size:10px;letter-spacing:.15em;text-transform:uppercase;opacity:0;transform:translateY(6px);transition:all var(--tr)}
+.life-card:hover .life-link{opacity:1;transform:translateY(0)}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:36px}
+.fbtn{padding:7px 18px;border:1px solid var(--border);font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;cursor:pointer;background:var(--wht);transition:all var(--tr);color:var(--textl)}
+.fbtn:hover,.fbtn.act{background:var(--blk);color:var(--wht);border-color:var(--blk)}
+
+/* PRODUCT GRID */
+.prod-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;max-width:1240px;margin:0 auto}
+.prod-card{background:var(--wht);cursor:pointer;position:relative;transition:box-shadow var(--tr)}
+.prod-card:hover{box-shadow:0 10px 40px rgba(0,0,0,.1)}
+.prod-img-wrap{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--cream)}
+.prod-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.prod-card:hover .prod-img-wrap img{transform:scale(1.04)}
+.pbadge{position:absolute;top:10px;left:10px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;font-weight:600}
+.b-new{background:var(--blk);color:var(--wht)}.b-hot{background:#c44;color:var(--wht)}
+.pquick{position:absolute;bottom:10px;left:10px;right:10px;background:rgba(10,10,10,.9);color:var(--wht);padding:9px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;text-align:center;font-weight:500;opacity:0;transform:translateY(4px);transition:all var(--tr)}
+.prod-card:hover .pquick{opacity:1;transform:translateY(0)}
+.prod-info{padding:14px}
+.prod-pid{font-size:9px;color:var(--mid);letter-spacing:.1em;margin-bottom:3px}
+.prod-name{font-family:var(--serif);font-size:16px;font-weight:400;margin-bottom:3px}
+.prod-meta{display:flex;align-items:center;justify-content:space-between}
+.prod-price{font-size:14px;font-weight:500}
+.prod-cat{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid)}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(10,10,10,.65);z-index:200;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
+.modal-bg.open{display:flex}
+.modal{background:var(--wht);max-width:840px;width:100%;max-height:92vh;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;position:relative}
+.modal-img-col{background:var(--cream);overflow:hidden;min-height:400px}
+.modal-img-col img{width:100%;height:100%;object-fit:cover}
+.modal-body{padding:34px 30px;display:flex;flex-direction:column;gap:17px}
+.m-close{position:absolute;top:10px;right:10px;width:34px;height:34px;background:var(--wht);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all var(--tr);z-index:10}
+.m-close:hover{background:var(--blk);color:var(--wht)}
+.m-pid{font-size:10px;letter-spacing:.12em;color:var(--mid);text-transform:uppercase}
+.m-name{font-family:var(--serif);font-size:26px;font-weight:300;line-height:1.2}
+.m-price{font-size:22px;font-weight:600}
+.m-desc{font-size:13px;color:var(--textl);line-height:1.8;font-weight:300}
+.size-lbl{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;margin-bottom:8px}
+.size-row{display:flex;gap:7px;flex-wrap:wrap}
+.s-btn{width:42px;height:42px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;cursor:pointer;transition:all var(--tr);background:var(--wht);font-family:var(--sans)}
+.s-btn:hover,.s-btn.sel{background:var(--blk);color:var(--wht);border-color:var(--blk)}
+.qty-row{display:flex;align-items:center;gap:10px}
+.qty-lbl{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:500}
+.qty-ctrl{display:flex;align-items:center;border:1px solid var(--border)}
+.q-btn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;background:none;border:none;font-family:var(--sans);transition:background var(--tr)}
+.q-btn:hover{background:var(--cream)}
+.q-num{width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;border-left:1px solid var(--border);border-right:1px solid var(--border)}
+.m-trust{display:flex;flex-direction:column;gap:6px}
+.m-ti{font-size:11px;color:var(--textl)}
+.btn-wa{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--wa);color:#fff;padding:13px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;transition:all var(--tr);border:none;cursor:pointer;font-family:var(--sans);width:100%}
+.btn-wa:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn-cart{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--blk);color:var(--wht);padding:13px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;transition:all var(--tr);border:none;cursor:pointer;font-family:var(--sans);width:100%}
+.btn-cart:hover{background:#333}
+
+/* CART PANEL */
+.cart-panel{position:fixed;top:0;right:-480px;width:460px;max-width:100%;height:100vh;background:var(--wht);z-index:300;display:flex;flex-direction:column;box-shadow:-6px 0 40px rgba(0,0,0,.12);transition:right .35s cubic-bezier(.4,0,.2,1);border-left:1px solid var(--border)}
+.cart-panel.open{right:0}
+.cart-bd{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:299;display:none}
+.cart-bd.open{display:block}
+.cart-hdr{padding:22px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cart-hdr h2{font-family:var(--serif);font-size:22px;font-weight:300}
+.cart-x{font-size:20px;cursor:pointer;color:var(--textl);transition:color var(--tr)}
+.cart-x:hover{color:var(--blk)}
+.cart-items{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px}
+.cart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;color:var(--textl)}
+.ci{display:grid;grid-template-columns:70px 1fr auto;gap:12px;align-items:start;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.ci-img{width:70px;height:88px;object-fit:cover}
+.ci-name{font-family:var(--serif);font-size:15px;font-weight:400;margin-bottom:3px}
+.ci-meta{font-size:10px;color:var(--mid);letter-spacing:.05em;margin-bottom:8px}
+.ci-qty{display:flex;align-items:center;gap:8px}
+.ci-qty button{width:22px;height:22px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;background:none;transition:all var(--tr)}
+.ci-qty button:hover{background:var(--blk);color:var(--wht);border-color:var(--blk)}
+.ci-qty span{font-size:12px;font-weight:500;min-width:18px;text-align:center}
+.ci-price{font-weight:600;font-size:14px;white-space:nowrap}
+.cart-ftr{padding:20px 24px;border-top:1px solid var(--border)}
+.cart-tot{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.cart-tot span{font-size:12px;color:var(--textl)}
+.cart-tot strong{font-family:var(--serif);font-size:22px;font-weight:400}
+.cart-note{font-size:10px;color:var(--mid);margin-bottom:14px;text-align:center;letter-spacing:.04em}
+
+/* WHY SECTION */
+.why-sec{padding:72px 32px;background:var(--blk);color:var(--wht)}
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);max-width:1000px;margin:0 auto}
+.why-card{background:var(--blk);padding:38px 30px;transition:background var(--tr)}
+.why-card:hover{background:#111}
+.why-ic{font-size:26px;margin-bottom:14px}
+.why-card h3{font-family:var(--serif);font-size:20px;font-weight:300;margin-bottom:8px;color:var(--wht)}
+.why-card p{font-size:12px;color:rgba(255,255,255,.5);line-height:1.7;font-weight:300}
+.trust-row{display:flex;justify-content:center;gap:12px;margin-top:40px;flex-wrap:wrap}
+.trust-chip{display:flex;align-items:center;gap:7px;padding:9px 16px;border:1px solid rgba(255,255,255,.15);font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.7)}
+
+/* BLOG */
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;max-width:1000px;margin:0 auto}
+.blog-card{border:1px solid var(--border);overflow:hidden;transition:box-shadow var(--tr)}
+.blog-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.08)}
+.blog-vid{position:relative;aspect-ratio:16/9;background:var(--cream)}
+.blog-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.blog-txt{padding:18px}
+.blog-cat{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-dark);font-weight:500;margin-bottom:6px}
+.blog-txt h3{font-family:var(--serif);font-size:19px;font-weight:400;margin-bottom:6px;line-height:1.3}
+.blog-txt p{font-size:12px;color:var(--textl);line-height:1.7;font-weight:300}
+
+/* POLICY */
+.policy-sec{padding:60px 32px;background:var(--cream);border-top:1px solid var(--border)}
+.policy-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:920px;margin:0 auto}
+.pc{background:var(--wht);border:1px solid var(--border);padding:30px}
+.pc h3{font-family:var(--serif);font-size:20px;font-weight:400;margin-bottom:15px;display:flex;align-items:center;gap:8px}
+.pc li{font-size:12px;color:var(--textl);display:flex;align-items:flex-start;gap:8px;line-height:1.5;margin-bottom:9px}
+.pc li::before{content:'—';color:var(--accent);flex-shrink:0}
+
+/* FOOTER */
+footer{background:var(--blk);color:var(--wht);padding:52px 32px 28px}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;max-width:1000px;margin-left:auto;margin-right:auto}
+.fc h4{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:14px;font-weight:500}
+.fc li{margin-bottom:9px}
+.fc li a,.fc li span{font-size:12px;color:rgba(255,255,255,.6);transition:color var(--tr);cursor:pointer}
+.fc li a:hover,.fc li span:hover{color:var(--wht)}
+.foot-bot{border-top:1px solid rgba(255,255,255,.08);padding-top:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;max-width:1000px;margin:0 auto}
+.foot-bot p{font-size:11px;color:rgba(255,255,255,.3)}
+
+/* SHOP PAGE HERO */
+.shop-hero{background:var(--cream);padding:44px 32px 36px;text-align:center;border-bottom:1px solid var(--border)}
+.shop-hero h2{font-family:var(--serif);font-size:clamp(28px,5vw,46px);font-weight:300}
+.shop-hero h2 em{font-style:italic;color:var(--accent-dark)}
+
+/* WA FLOAT */
+.wa-float{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--wa);color:#fff;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 20px rgba(37,211,102,.4);transition:all var(--tr);text-decoration:none}
+.wa-float:hover{transform:scale(1.1)}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;right:24px;background:var(--blk);color:var(--wht);padding:12px 20px;font-size:12px;z-index:999;transform:translateY(60px);opacity:0;transition:all var(--tr);pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* SCROLL ANIMATIONS */
+.fade-in{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .life-grid,.prod-grid{grid-template-columns:repeat(2,1fr)}
+  .why-grid{grid-template-columns:repeat(2,1fr)}
+  .foot-grid{grid-template-columns:1fr 1fr;gap:28px}
+  .blog-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .hnav{display:none}
+  .hamburger{display:flex}
+  .hero-content{padding:0 28px}
+  .hero h1{font-size:52px}
+  .modal{grid-template-columns:1fr}
+  .modal-img-col{aspect-ratio:4/3;min-height:auto}
+  .policy-grid{grid-template-columns:1fr}
+  .blog-grid{grid-template-columns:1fr}
+  .foot-grid{grid-template-columns:1fr;gap:22px}
+  .strip{gap:16px}
+}
+@media(max-width:480px){
+  .hero-content{padding:0 20px}
+  .hero h1{font-size:42px}
+  .hero-btns{flex-direction:column}
+  .hero-btns .btn-blk,.hero-btns .btn-out{width:100%;justify-content:center}
+  .prod-grid{grid-template-columns:repeat(2,1fr);gap:1px}
+  .life-grid{grid-template-columns:repeat(2,1fr);gap:1px}
+}
+</style>
+</head>
+<body>
+
+<div class="ann">🚚 Free shipping on orders above ₹999 <span>·</span> Prepaid only <span>·</span> 3–5 day delivery pan India</div>
+
+<header class="hdr">
+  <div class="logo" onclick="showPage('home')">FOR<em>ME</em></div>
+  <nav class="hnav">
+    <a onclick="showPage('home');smoothScroll('#lifestyle')">Collections</a>
+    <a onclick="showPage('shop','all')">Shop All</a>
+    <a onclick="showPage('home');setTimeout(()=>smoothScroll('#tips'),100)">Style Tips</a>
+    <a onclick="showPage('home');setTimeout(()=>smoothScroll('#policy'),100)">Policy</a>
+  </nav>
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="cart-btn" onclick="toggleCart()">🛍 Cart <span class="cbadge" id="ccount">0</span></button>
+    <div class="hamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></div>
+  </div>
+</header>
+<nav class="mobile-nav" id="mobile-nav">
+  <a onclick="showPage('home');closeMobileNav();smoothScroll('#lifestyle')">Collections</a>
+  <a onclick="showPage('shop','all');closeMobileNav()">Shop All</a>
+  <a onclick="showPage('home');closeMobileNav();setTimeout(()=>smoothScroll('#tips'),120)">Style Tips</a>
+  <a onclick="showPage('home');closeMobileNav();setTimeout(()=>smoothScroll('#policy'),120)">Policy</a>
+</nav>
+
+<!-- ═══ HOME PAGE ═══ -->
+<div class="page active" id="pg-home">
+
+  <!-- HERO: full background image -->
+  <section class="hero">
+    <img class="hero-bg" src="./hero.png?w=1800&q=90&fit=crop&crop=top" alt="FORME Fashion" loading="eager">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-eye">New Collection — 2025</p>
+      <h1>Dress for<br>your <em>life,</em><br>not theirs.</h1>
+      <p class="hero-sub">Premium clothing for every chapter. Crafted with intention, priced with honesty.</p>
+      <div class="hero-btns">
+        <button class="btn-blk" onclick="smoothScroll('#lifestyle')">Shop by Lifestyle →</button>
+        <button class="btn-out" onclick="showPage('shop','all')">View All Products</button>
+      </div>
+      <div class="hero-card">
+        <p>Starting from</p>
+        <strong>₹499</strong>
+        <div class="hbadges">
+          <span class="hbadge">🔒 UPI Only</span>
+          <span class="hbadge">💬 WhatsApp</span>
+          <span class="hbadge">↩ Exchange</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="strip">
+    <span class="strip-item">🚚 Ships in 24 hrs</span>
+    <span class="strip-item">📦 3–5 day delivery</span>
+    <span class="strip-item">🌍 Pan India</span>
+    <span class="strip-item">🔒 Secure UPI</span>
+    <span class="strip-item">↩ 3-day exchange</span>
+  </div>
+
+  <!-- LIFESTYLE -->
+  <section class="sec" style="background:var(--wht)" id="lifestyle">
+    <div class="sec-hdr fade-in">
+      <p class="sec-eye">Curated for you</p>
+      <h2>Shop by <em>Lifestyle</em></h2>
+      <p>Clothes that match how you actually live — not just how you aspire to.</p>
+    </div>
+    <div class="life-grid">
+      <div class="life-card" onclick="showPage('shop','office')">
+        <img class="life-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&q=80&fit=crop" alt="Office Wear" loading="lazy">
+        <div class="life-ov"></div>
+        <div class="life-txt"><p class="life-cat">Category</p><h3>Office Wear</h3><span class="life-link">Shop now →</span></div>
+      </div>
+      <div class="life-card" onclick="showPage('shop','gym')">
+        <img class="life-img" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=700&q=80&fit=crop" alt="Gym Wear" loading="lazy">
+        <div class="life-ov"></div>
+        <div class="life-txt"><p class="life-cat">Category</p><h3>Gym Wear</h3><span class="life-link">Shop now →</span></div>
+      </div>
+      <div class="life-card" onclick="showPage('shop','college')">
+        <img class="life-img" src="https://plus.unsplash.com/premium_photo-1673125287084-e90996bad505?w=700&q=80&fit=crop" alt="College Wear" loading="lazy">
+        <div class="life-ov"></div>
+        <div class="life-txt"><p class="life-cat">Category</p><h3>College Wear</h3><span class="life-link">Shop now →</span></div>
+      </div>
+      <div class="life-card" onclick="showPage('shop','everyday')">
+        <img class="life-img" src="https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=700&q=80&fit=crop" alt="Everyday Wear" loading="lazy">
+        <div class="life-ov"></div>
+        <div class="life-txt"><p class="life-cat">Category</p><h3>Everyday Wear</h3><span class="life-link">Shop now →</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="sec" style="background:var(--cream)" id="featured">
+    <div class="sec-hdr fade-in">
+      <p class="sec-eye">Trending Now</p>
+      <h2>Featured <em>Products</em></h2>
+      <p>Hand-picked pieces from our latest drops.</p>
+    </div>
+    <div class="prod-grid" id="home-grid"></div>
+    <div style="text-align:center;margin-top:32px">
+      <button class="btn-dark" onclick="showPage('shop','all')">View All Products →</button>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="why-sec" id="why">
+    <div class="sec-hdr fade-in">
+      <p class="sec-eye" style="color:rgba(255,255,255,.4)">Our promise</p>
+      <h2 style="color:var(--wht)">Why choose <em>FORME?</em></h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-ic">💎</div><h3>Direct Pricing</h3><p>No middlemen. We source and sell directly — premium quality at honest prices.</p></div>
+      <div class="why-card"><div class="why-ic">🧵</div><h3>Premium Quality</h3><p>Every piece passes strict quality checks. Fabrics that feel as good as they look.</p></div>
+      <div class="why-card"><div class="why-ic">⚡</div><h3>Fast Dispatch</h3><p>Orders dispatched within 24 hours. Tracked delivery in 3–5 days anywhere in India.</p></div>
+      <div class="why-card"><div class="why-ic">📐</div><h3>Size Exchange</h3><p>Wrong size? Exchange within 3 days of delivery — unused, tags intact.</p></div>
+      <div class="why-card"><div class="why-ic">💬</div><h3>WhatsApp Support</h3><p>Direct human support — no chatbots, no tickets. Real answers in real time.</p></div>
+      <div class="why-card"><div class="why-ic">🔒</div><h3>Secure UPI</h3><p>Pay via UPI — no card details stored, no third-party gateways. Simple & secure.</p></div>
+    </div>
+    <div class="trust-row">
+      <span class="trust-chip">🔒 Secure UPI Payments</span>
+      <span class="trust-chip">⚠️ Prepaid Only — No COD</span>
+      <span class="trust-chip">💬 Instant WhatsApp Support</span>
+      <span class="trust-chip">↩ 3-Day Size Exchange</span>
+    </div>
+  </section>
+
+  <!-- STYLE TIPS -->
+  <section class="sec" style="background:var(--wht)" id="tips">
+    <div class="sec-hdr fade-in">
+      <p class="sec-eye">Style Inspiration</p>
+      <h2>Fashion <em>Tips</em></h2>
+      <p>Learn how to style our pieces like a pro.</p>
+    </div>
+    <div class="blog-grid">
+      <div class="blog-card fade-in">
+        <div class="blog-vid"><iframe src="https://www.youtube.com/embed/DblHBVvdWyE" title="Office outfit ideas" allowfullscreen loading="lazy"></iframe></div>
+        <div class="blog-txt"><p class="blog-cat">Office Style</p><h3>5 Office Outfits That Mean Business</h3><p>Dress sharp without trying too hard. Curated for Indian workplaces.</p></div>
+      </div>
+      <div class="blog-card fade-in">
+        <div class="blog-vid"><iframe src="https://www.youtube.com/embed/kp0JI8Kqruc" title="Gym fashion tips" allowfullscreen loading="lazy"></iframe></div>
+        <div class="blog-txt"><p class="blog-cat">Gym & Active</p><h3>Gym Fits That Actually Perform</h3><p>Look good, lift heavy. The perfect balance of form and function.</p></div>
+      </div>
+      <div class="blog-card fade-in">
+        <div class="blog-vid"><iframe src="https://www.youtube.com/embed/zH4_uKiNxdU" title="Casual styling" allowfullscreen loading="lazy"></iframe></div>
+        <div class="blog-txt"><p class="blog-cat">Everyday Style</p><h3>Effortless Looks for Every Day</h3><p>Casual doesn't mean sloppy. Elevate your everyday wardrobe.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POLICY -->
+  <section class="policy-sec" id="policy">
+    <div class="sec-hdr fade-in">
+      <p class="sec-eye">Transparency First</p>
+      <h2>Payment & <em>Policy</em></h2>
+    </div>
+    <div class="policy-grid">
+      <div class="pc">
+        <h3>💳 Payment Policy</h3>
+        <ul>
+          <li>UPI payments only — no Cash on Delivery</li>
+          <li>After WhatsApp order, we'll share our UPI ID / QR code</li>
+          <li>Send payment screenshot to confirm your order</li>
+          <li>Order processed only after payment confirmation</li>
+          <li>BHIM, GPay, PhonePe, Paytm all accepted</li>
+        </ul>
+      </div>
+      <div class="pc">
+        <h3>↩ Refund & Exchange</h3>
+        <ul>
+          <li>Refunds only for damaged or wrong items delivered</li>
+          <li>No refunds for size issues or change of mind</li>
+          <li>Size exchange within 3 days — unused, tags intact</li>
+          <li>Unboxing video required for all damage claims</li>
+          <li>All requests subject to team verification</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-grid">
+      <div class="fc">
+        <div class="logo" style="color:var(--wht);margin-bottom:14px" onclick="showPage('home')">FOR<em style="color:var(--accent)">ME</em></div>
+        <p style="font-size:12px;color:rgba(255,255,255,.4);line-height:1.7;font-weight:300;max-width:260px">Premium clothing for every lifestyle. Direct pricing, honest quality, real human support via WhatsApp.</p>
+      </div>
+      <div class="fc"><h4>Shop</h4><ul>
+        <li><span onclick="showPage('shop','office')">Office Wear</span></li>
+        <li><span onclick="showPage('shop','gym')">Gym Wear</span></li>
+        <li><span onclick="showPage('shop','college')">College Wear</span></li>
+        <li><span onclick="showPage('shop','everyday')">Everyday Wear</span></li>
+      </ul></div>
+      <div class="fc"><h4>Info</h4><ul>
+        <li><span onclick="smoothScroll('#why')">Why Choose Us</span></li>
+        <li><span onclick="smoothScroll('#tips')">Style Tips</span></li>
+        <li><span onclick="smoothScroll('#policy')">Refund Policy</span></li>
+        <li><span onclick="smoothScroll('#policy')">Payment Info</span></li>
+      </ul></div>
+      <div class="fc"><h4>Contact</h4><ul>
+        <li><a href="https://wa.me/919558875322" target="_blank">💬 WhatsApp Us</a></li>
+        <li><a href="mailto:ronaldburck.a@gmail.com">📧 hello@forme.in</a></li>
+        <li><a href="#">📸 Instagram</a></li>
+      </ul></div>
+    </div>
+    <div style="height:1px;background:rgba(255,255,255,.08);margin-bottom:22px;max-width:1000px;margin-left:auto;margin-right:auto"></div>
+    <div class="foot-bot">
+      <p>© 2025 FORME. All rights reserved.</p>
+      <p>🔒 Secure UPI &nbsp;|&nbsp; ⚠️ No COD &nbsp;|&nbsp; 💬 WhatsApp Support</p>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══ SHOP PAGE ═══ -->
+<div class="page" id="pg-shop">
+  <div class="shop-hero">
+    <p style="font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--mid);font-weight:500;margin-bottom:8px">Browse</p>
+    <h2 id="shop-title">All <em>Products</em></h2>
+    <p id="shop-sub" style="margin-top:10px;color:var(--textl);font-size:13px;font-weight:300">Our complete collection</p>
+  </div>
+  <div style="padding:36px 32px;background:var(--wht)">
+    <div class="filter-bar">
+      <button class="fbtn act" data-cat="all" onclick="shopFilter('all',this)">All</button>
+      <button class="fbtn" data-cat="office" onclick="shopFilter('office',this)">Office</button>
+      <button class="fbtn" data-cat="gym" onclick="shopFilter('gym',this)">Gym</button>
+      <button class="fbtn" data-cat="college" onclick="shopFilter('college',this)">College</button>
+      <button class="fbtn" data-cat="everyday" onclick="shopFilter('everyday',this)">Everyday</button>
+    </div>
+    <div class="prod-grid" id="shop-grid"></div>
+  </div>
+  <div class="why-sec" style="padding:36px 32px">
+    <div class="trust-row" style="margin-top:0">
+      <span class="trust-chip">🔒 Secure UPI</span>
+      <span class="trust-chip">⚠️ Prepaid Only</span>
+      <span class="trust-chip">💬 WhatsApp Support</span>
+      <span class="trust-chip">↩ 3-Day Exchange</span>
+    </div>
+  </div>
+  <footer>
+    <div class="foot-bot" style="border:none;padding:16px 0 0">
+      <p>© 2025 FORME. <span style="cursor:pointer;color:rgba(255,255,255,.5)" onclick="showPage('home')">← Back to Home</span></p>
+      <p>🔒 UPI Payments &nbsp;|&nbsp; ⚠️ No COD</p>
+    </div>
+  </footer>
+</div>
+
+<!-- CART -->
+<div class="cart-bd" id="cart-bd" onclick="toggleCart()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-hdr"><h2>Your Cart</h2><span class="cart-x" onclick="toggleCart()">✕</span></div>
+  <div class="cart-items" id="cart-items-el"></div>
+  <div class="cart-ftr" id="cart-ftr" style="display:none">
+    <div class="cart-tot"><span>Total Amount</span><strong id="cart-total">₹0</strong></div>
+    <p class="cart-note">⚠️ Prepaid only · UPI payment after WhatsApp confirmation</p>
+    <button class="btn-wa" onclick="checkoutWA()">💬 Order on WhatsApp</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="closeMod(event)">
+  <div class="modal" id="modal">
+    <div class="modal-img-col"><img id="mod-img" src="" alt=""></div>
+    <div class="modal-body">
+      <button class="m-close" onclick="closeModDirect()">✕</button>
+      <div><p class="m-pid" id="mod-pid"></p><h2 class="m-name" id="mod-name"></h2></div>
+      <p class="m-price" id="mod-price"></p>
+      <p class="m-desc" id="mod-desc"></p>
+      <div><p class="size-lbl">Select Size</p><div class="size-row" id="size-row"></div></div>
+      <div class="qty-row">
+        <span class="qty-lbl">Qty</span>
+        <div class="qty-ctrl">
+          <button class="q-btn" onclick="chgQty(-1)">−</button>
+          <div class="q-num" id="mod-qty">1</div>
+          <button class="q-btn" onclick="chgQty(1)">+</button>
+        </div>
+      </div>
+      <div class="m-trust">
+        <div class="m-ti">🔒 Secure UPI Payment · No COD</div>
+        <div class="m-ti">🚚 Ships within 24 hrs · 3–5 day delivery</div>
+        <div class="m-ti">↩ 3-day size exchange · Unused with tags</div>
+      </div>
+      <button class="btn-cart" onclick="addCart()">🛍 Add to Cart</button>
+      <button class="btn-wa" onclick="orderWA()">💬 Order on WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<a href="https://wa.me/919558875322?text=Hi%2C+I+have+a+question+about+FORME." class="wa-float" target="_blank">💬</a>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── EDIT THIS ──────────────────────────────
+const WA_NUMBER = '919558875322'; // Your WhatsApp number with country code, no +
+
+// ── PRODUCTS ──────────────────────────────
+// To add a product: copy any object, change id/name/price/cat/badge/img/desc
+const PRODUCTS = [
+  {id:'SH001',name:'Oxford Button-Down Shirt',price:999,cat:'office',badge:'new',
+   img:'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=700&q=80&fit=crop',
+   desc:'Classic Oxford fabric with slim contemporary fit. 100% premium cotton. Perfect for formal and semi-formal settings.'},
+  {id:'TR001',name:'Slim Fit Trousers',price:1299,cat:'office',badge:'',
+   img:'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=700&q=80&fit=crop',
+   desc:'Tailored slim-fit trousers in stretch fabric. Wrinkle-resistant. Mid-rise waist with tapered leg.'},
+  {id:'BZ001',name:'Unstructured Blazer',price:2499,cat:'office',badge:'hot',
+   img:'https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?q?w=700&q=80&fit=crop',
+   desc:'Lightweight unstructured blazer. Looks polished, feels like a casual jacket. Machine washable.'},
+  {id:'GS001',name:'Compression Shorts',price:699,cat:'gym',badge:'new',
+   img:'https://images.unsplash.com/photo-1747213848474-b89023221e20?w=700&q=80&fit=crop',
+   desc:'High-performance compression shorts with 4-way stretch. Moisture-wicking. Flatlock seams prevent chafing.'},
+  {id:'GT001',name:'Dry-Fit Training Tee',price:599,cat:'gym',badge:'',
+   img:'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=700&q=80&fit=crop',
+   desc:'Ultra-lightweight dry-fit tee. Sweat-wicking with breathable mesh panels. Your go-to training companion.'},
+  {id:'GJ001',name:'Jogger Track Pants',price:899,cat:'gym',badge:'hot',
+   img:'https://images.unsplash.com/photo-1711175017307-bbacf7c2ca13?w=700&q=80&fit=crop',
+   desc:'Versatile jogger pants for gym or casual wear. Elastic waist, deep pockets, tapered fit with ribbed cuffs.'},
+  {id:'BJ001',name:'Women`s Ultra soft Joggers',price:899,cat:'gym',badge:'hot',
+   img:'https://images.unsplash.com/photo-1628257087270-185e1d5d6744?w=700&q=80&fit=crop',
+   desc:'Women`s jogger pants for gym or casual wear. Elastic waist, deep pockets, tapered fit with ribbed cuffs.'},   
+  {id:'CS001',name:'Oversized Graphic Tee',price:549,cat:'college',badge:'new',
+   img:'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=700&q=80&fit=crop',
+   desc:"Boxy oversized fit with bold minimal graphics. 100% combed cotton. The tee you'll wear on repeat."},
+  {id:'CJ001',name:'Casual Denim Jacket',price:1799,cat:'college',badge:'',
+   img:'https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=700&q=80&fit=crop',
+   desc:'Lightweight denim jacket with relaxed fit. Perfect layering piece. Chest pockets and washed finish.'},
+  {id:'CH001',name:'Everyday Chinos',price:999,cat:'college',badge:'',
+   img:'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=700&q=80&fit=crop',
+   desc:'Stretch chinos that work everywhere. Slim through thigh, tapered at ankle. The smarter alternative to jeans.'},
+  {id:'ET001',name:'Essential Linen Tee',price:699,cat:'everyday',badge:'new',
+   img:'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=700&q=80&fit=crop',
+   desc:'Breathable linen-cotton blend perfect for Indian summers. Relaxed fit with slightly dropped shoulders.'},
+  {id:'ES001',name:'Weekend Shorts',price:799,cat:'everyday',badge:'hot',
+   img:'https://images.unsplash.com/photo-1562183241-b937e95585b6?w=700&q=80&fit=crop',
+   desc:'Easy weekend shorts with elastic waist and side pockets. Beach, market, or lazy Sunday. Quick-dry fabric.'},
+  {id:'EK001',name:'Knit Polo Shirt',price:899,cat:'everyday',badge:'',
+   img:'https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?w=700&q=80&fit=crop',
+   desc:'Refined knit polo with classic 3-button placket. Pique cotton with stretch. Dress up or dress down.'},
+];
+
+// ── STATE ──────────────────────────────────
+let cart = JSON.parse(localStorage.getItem('forme_cart')||'[]');
+let curProd = null, curQty = 1, curSize = null;
+
+// ── NAVIGATION ─────────────────────────────
+function showPage(pg, cat) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('pg-'+pg).classList.add('active');
+  window.scrollTo(0,0);
+  if (pg === 'home') renderHomeGrid();
+  if (pg === 'shop') {
+    renderShopGrid(cat||'all');
+    setShopTitle(cat||'all');
+    document.querySelectorAll('.fbtn').forEach(b => {
+      b.classList.remove('act');
+      if (b.dataset.cat === (cat||'all')) b.classList.add('act');
+    });
+  }
+}
+function smoothScroll(sel) {
+  const el = document.querySelector(sel);
+  if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function toggleMobileNav() { document.getElementById('mobile-nav').classList.toggle('open'); }
+function closeMobileNav() { document.getElementById('mobile-nav').classList.remove('open'); }
+
+// ── SHOP PAGE ──────────────────────────────
+const SHOP_TITLES = {
+  all:      ['All Products',  'Our complete collection'],
+  office:   ['Office Wear',   'Sharp looks for the workplace'],
+  gym:      ['Gym Wear',      'Performance meets style'],
+  college:  ['College Wear',  'Casual, cool & campus-ready'],
+  everyday: ['Everyday Wear', 'Effortless pieces for daily life'],
+};
+function setShopTitle(cat) {
+  const [t,s] = SHOP_TITLES[cat]||SHOP_TITLES.all;
+  const words = t.split(' '), last = words.pop();
+  document.getElementById('shop-title').innerHTML =
+    (words.length ? words.join(' ')+' ' : '') +
+    `<em style="font-style:italic;color:var(--accent-dark)">${last}</em>`;
+  document.getElementById('shop-sub').textContent = s;
+}
+function shopFilter(cat, btn) {
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('act'));
+  btn.classList.add('act');
+  renderShopGrid(cat);
+  setShopTitle(cat);
+}
+
+// ── PRODUCT CARDS ──────────────────────────
+function prodCard(p) {
+  return `<div class="prod-card" onclick="openMod('${p.id}')">
+    <div class="prod-img-wrap">
+      <img src="${p.img}" alt="${p.name}" loading="lazy">
+      ${p.badge ? `<span class="pbadge b-${p.badge}">${p.badge}</span>` : ''}
+      <div class="pquick">Quick View</div>
+    </div>
+    <div class="prod-info">
+      <p class="prod-pid">${p.id}</p>
+      <h3 class="prod-name">${p.name}</h3>
+      <div class="prod-meta">
+        <span class="prod-price">₹${p.price.toLocaleString('en-IN')}</span>
+        <span class="prod-cat">${p.cat}</span>
+      </div>
+    </div>
+  </div>`;
+}
+function renderHomeGrid() {
+  const g = document.getElementById('home-grid');
+  if (!g) return;
+  g.innerHTML = PRODUCTS.filter(p => ['BZ001','GT001','CS001','ET001'].includes(p.id)).map(prodCard).join('');
+}
+function renderShopGrid(cat) {
+  const filtered = cat === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === cat);
+  document.getElementById('shop-grid').innerHTML = filtered.map(prodCard).join('');
+}
+
+// ── MODAL ──────────────────────────────────
+function openMod(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  curProd = p; curQty = 1; curSize = null;
+  document.getElementById('mod-pid').textContent   = 'Product ID: ' + p.id;
+  document.getElementById('mod-name').textContent  = p.name;
+  document.getElementById('mod-price').textContent = '₹' + p.price.toLocaleString('en-IN');
+  document.getElementById('mod-desc').textContent  = p.desc;
+  document.getElementById('mod-qty').textContent   = 1;
+  document.getElementById('mod-img').src = p.img;
+  document.getElementById('mod-img').alt = p.name;
+  document.getElementById('size-row').innerHTML = ['S','M','L','XL'].map(s =>
+    `<button class="s-btn" onclick="selSize('${s}',this)">${s}</button>`
+  ).join('');
+  document.getElementById('modal-bg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMod(e) { if (e.target === document.getElementById('modal-bg')) closeModDirect(); }
+function closeModDirect() { document.getElementById('modal-bg').classList.remove('open'); document.body.style.overflow = ''; }
+function selSize(s, btn) { curSize = s; document.querySelectorAll('.s-btn').forEach(b => b.classList.remove('sel')); btn.classList.add('sel'); }
+function chgQty(d) { curQty = Math.max(1, curQty+d); document.getElementById('mod-qty').textContent = curQty; }
+
+// ── CART ───────────────────────────────────
+function addCart() {
+  if (!curProd) return;
+  if (!curSize) { showToast('Please select a size!'); return; }
+  const key = curProd.id+'_'+curSize;
+  const ex = cart.find(i => i.key === key);
+  if (ex) ex.qty += curQty;
+  else cart.push({key, id:curProd.id, name:curProd.name, price:curProd.price, size:curSize, qty:curQty, img:curProd.img});
+  saveCart();
+  closeModDirect();
+  showToast(curProd.name + ' added to cart!');
+}
+function saveCart() {
+  localStorage.setItem('forme_cart', JSON.stringify(cart));
+  document.getElementById('ccount').textContent = cart.reduce((a,i) => a+i.qty, 0);
+}
+function renderCart() {
+  const el  = document.getElementById('cart-items-el');
+  const ftr = document.getElementById('cart-ftr');
+  if (!cart.length) {
+    el.innerHTML = '<div class="cart-empty"><span style="font-size:40px;opacity:.25">🛍</span><p style="font-size:13px">Your cart is empty.</p></div>';
+    ftr.style.display = 'none'; return;
+  }
+  el.innerHTML = cart.map((item,i) => `
+    <div class="ci">
+      <img class="ci-img" src="${item.img}" alt="${item.name}" loading="lazy">
+      <div>
+        <p class="ci-name">${item.name}</p>
+        <p class="ci-meta">Size: ${item.size} &nbsp;|&nbsp; ${item.id}</p>
+        <div class="ci-qty">
+          <button onclick="updCart(${i},-1)">−</button>
+          <span>${item.qty}</span>
+          <button onclick="updCart(${i},1)">+</button>
+        </div>
+      </div>
+      <div class="ci-price">₹${(item.price*item.qty).toLocaleString('en-IN')}</div>
+    </div>`).join('');
+  document.getElementById('cart-total').textContent = '₹' + cart.reduce((a,i) => a+i.price*i.qty, 0).toLocaleString('en-IN');
+  ftr.style.display = 'block';
+}
+function updCart(i, d) {
+  cart[i].qty += d;
+  if (cart[i].qty <= 0) cart.splice(i,1);
+  saveCart(); renderCart();
+}
+function toggleCart() {
+  const panel = document.getElementById('cart-panel');
+  const bd    = document.getElementById('cart-bd');
+  const open  = panel.classList.toggle('open');
+  bd.classList.toggle('open', open);
+  if (open) { renderCart(); document.body.style.overflow = 'hidden'; }
+  else document.body.style.overflow = '';
+}
+
+// ── WHATSAPP ───────────────────────────────
+function orderWA() {
+  if (!curProd) return;
+  if (!curSize) { showToast('Please select a size!'); return; }
+  const msg = `Hi, I want to order from FORME:\n\nProduct ID: ${curProd.id}\nProduct: ${curProd.name}\nSize: ${curSize}\nQuantity: ${curQty}\nTotal: ₹${(curProd.price*curQty).toLocaleString('en-IN')}\n\nPlease share UPI details for payment.`;
+  window.open('https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent(msg), '_blank');
+}
+function checkoutWA() {
+  if (!cart.length) return;
+  const items = cart.map(i => `• ${i.name} (${i.id}) | Size: ${i.size} | Qty: ${i.qty} | ₹${(i.price*i.qty).toLocaleString('en-IN')}`).join('\n');
+  const total = cart.reduce((a,i) => a+i.price*i.qty, 0);
+  const msg = `Hi, I want to order from FORME:\n\n${items}\n\n*Total: ₹${total.toLocaleString('en-IN')}*\n\nPlease confirm and share UPI details for payment.`;
+  window.open('https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent(msg), '_blank');
+}
+
+// ── TOAST ──────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── SCROLL ANIMATIONS ──────────────────────
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }});
+}, {threshold:0.1});
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+// ── INIT ───────────────────────────────────
+renderHomeGrid();
+saveCart();
+</script>
+</body>
+</html>
