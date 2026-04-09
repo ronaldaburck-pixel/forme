@@ -583,7 +583,7 @@ footer{background:var(--blk);color:var(--wht);padding:56px 32px 32px}
       </ul></div>
       <div class="fc"><h4>Contact</h4><ul>
         <li><a href="https://wa.me/919558875322" target="_blank">💬 WhatsApp Us</a></li>
-        <li><a href="/cdn-cgi/l/email-protection#ed9f82838c81898c8f989f8e86c38cad8a808c8481c38e8280">📧 <span class="__cf_email__" data-cfemail="295b464748454d484b5c5b4a420748694e44484045074a4644">[email&#160;protected]</span></a></li>
+        <li><a href="#" id="email-link">📧 <span class="__cf_email__" data-cfemail="76041918171a1217140304151d581736111b171f1a5815191b">[email&#160;protected]</span></a></li>
         <li><a href="#">📸 @rona</a></li>
       </ul></div>
     </div>
@@ -729,7 +729,7 @@ footer{background:var(--blk);color:var(--wht);padding:56px 32px 32px}
 <a href="https://wa.me/919558875322?text=Hi%2C+I+have+a+question+about+FORME." class="wa-float" target="_blank">💬</a>
 <div class="toast" id="toast"></div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false">
 // ── EDIT THIS ──
 const WA_NUMBER = '919558875322'; // replace with your number
 
@@ -840,10 +840,11 @@ async function loadFromSheets() {
   });
 
   try {
-    // All fetches use cache:reload to bypass browser cache entirely
+    // cache:'no-store' bypasses browser cache WITHOUT triggering CORS preflight
+    // Never add custom headers to cross-origin requests — they trigger preflight
+    // which Google Apps Script cannot handle
     const fetchFresh = (url) => fetch(bustUrl(url), {
-      cache: 'no-store',          // Never use cached response
-      headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' }
+      cache: 'no-store'
     });
 
     // Load products
@@ -1293,7 +1294,7 @@ async function trackOrder() {
   }
 
   try {
-    const res  = await fetch(bustUrl(SHEET_API + '?action=track&orderId=' + encodeURIComponent(input)), { cache: 'no-store' });
+    const res  = await fetch(bustUrl(SHEET_API + '?action=track&orderId=' + encodeURIComponent(input)));
     const data = await res.json();
 
     if (!data.success || !data.order) {
@@ -1368,6 +1369,9 @@ loadFromSheets().then(() => {
   console.warn('Sheets load error:', err);
 });
 
+</script>
+<script>
+// Set email link — split so Cloudflare email scann
 </script>
 </body>
 </html>
