@@ -292,9 +292,8 @@ footer{background:var(--blk);color:var(--wht);padding:56px 32px 32px}
 }
 
 /* OUT OF STOCK */
-.prod-card.oos{cursor:default;opacity:.7}
+.prod-card.oos{cursor:default}
 .prod-card.oos:hover{box-shadow:none}
-.prod-card.oos .prod-img-wrap img{filter:grayscale(40%)}
 .prod-card.oos:hover .prod-img-wrap img{transform:none}
 .prod-card.oos .pquick{display:none}
 .b-oos{background:#888;color:var(--wht)}
@@ -913,9 +912,11 @@ async function logOrderToSheets(items, total) {
   if (!USE_SHEETS) return localOrderId;
 
   try {
+    // Use text/plain content-type to avoid CORS preflight
+    // GAS can parse this just fine with JSON.parse(e.postData.contents)
     const res = await fetch(SHEET_API, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({
         action: 'order',
         items: items,
@@ -1053,22 +1054,28 @@ function shopFilter(cat, btn) {
 
 // ── PRODUCT CARDS ──────────────────────────────────────────────────────────
 function prodCard(p) {
-  const oos = p.active === false || String(p.active).toUpperCase() === 'FALSE';
-  const clickAttr = oos ? '' : `onclick="openMod('${p.id}')"`;
-  return `<div class="prod-card${oos ? ' oos' : ''}" ${clickAttr}>
+  // active===false (from Sheets) OR active==='FALSE' string = OOS
+  // active===undefined/null/true/'' = in stock (fallback products have no active field)
+  const oos = p.active === false || p.active === 'false' || p.active === 'FALSE';
+  const firstImg = (p.images && p.images.length) ? p.images[0] : (p.img || '');
+
+  return `<div class="prod-card${oos ? ' oos' : ''}" ${oos ? '' : `onclick="openMod('${p.id}')"`}>
     <div class="prod-img-wrap">
-      <img src="${p.images ? p.images[0] : p.img}" alt="${p.name}" loading="lazy">
+      <img src="${firstImg}" alt="${p.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x500?text=No+Image'">
+      ${p.badge && !oos ? `<span class="pbadge b-${p.badge}">${p.badge}</span>` : ''}
       ${oos
         ? `<div class="oos-overlay"><span class="oos-label">Out of Stock</span></div>`
-        : `${p.badge ? `<span class="pbadge b-${p.badge}">${p.badge}</span>` : ''}
-           <div class="pquick">Quick View</div>`
+        : `<div class="pquick">Quick View</div>`
       }
     </div>
     <div class="prod-info">
       <p class="prod-pid">${p.id}</p>
       <h3 class="prod-name">${p.name}</h3>
       <div class="prod-meta">
-        <span class="prod-price">${oos ? '<span style="color:#888;font-size:13px;font-weight:400">Out of Stock</span>' : '₹'+p.price.toLocaleString('en-IN')}</span>
+        <span class="prod-price">${oos
+          ? `<span style="color:#888;font-size:13px;font-weight:400;letter-spacing:.05em">Out of Stock</span>`
+          : `₹${p.price.toLocaleString('en-IN')}`
+        }</span>
         <span class="prod-cat">${p.cat}</span>
       </div>
     </div>
@@ -1151,11 +1158,18 @@ function openMod(id) {
   document.getElementById('mod-desc').textContent  = p.desc;
   document.getElementById('mod-qty').textContent   = 1;
 
-  // Build image array — support comma-separated images OR single img field
-  const rawImgs = p.images
-    ? (Array.isArray(p.images) ? p.images : String(p.images).split(',').map(s=>s.trim()).filter(Boolean))
-    : (p.img ? [p.img] : []);
-  initGallery(rawImgs.length ? rawImgs : ['https://via.placeholder.com/600x800?text=No+Image']);
+  // Build image array:
+  // - From Sheets: p.images is already an array (split by Apps Script)
+  // - From fallback: p.img is a single URL string
+  // - Some Sheets rows may have comma-separated string if old format
+  let rawImgs = [];
+  if (p.images && Array.isArray(p.images) && p.images.length) {
+    rawImgs = p.images;                        // Sheets array
+  } else if (p.img) {
+    rawImgs = p.img.split(',').map(s=>s.trim()).filter(Boolean); // fallback or old format
+  }
+  if (!rawImgs.length) rawImgs = ['https://via.placeholder.com/600x800?text=No+Image'];
+  initGallery(rawImgs);
 
   document.getElementById('size-row').innerHTML = ['S','M','L','XL'].map(s =>
     `<button class="s-btn" onclick="selSize('${s}',this)">${s}</button>`
