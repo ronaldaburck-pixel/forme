@@ -1,0 +1,5 @@
+# Redirect www to non-www (optional, set your domain later)
+# https://www.forme.in/* https://forme.in/:splat 301
+
+# Fallback — serve index.html for all routes (SPA behaviour)
+/* /index.html 200

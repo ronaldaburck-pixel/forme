@@ -1,0 +1,19 @@
+/*
+  # Disable Cloudflare email obfuscation
+  X-Robots-Tag: noindex
+  
+/*
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/*.html
+  Cache-Control: no-cache, no-store, must-revalidate
+  X-Content-Type-Options: nosniff
+
+/images/*
+  Cache-Control: public, max-age=86400
+
+/*.png
+  Cache-Control: public, max-age=86400
+
+/*.jpg
+  Cache-Control: public, max-age=86400
