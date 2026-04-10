@@ -143,7 +143,7 @@ img{max-width:100%;display:block}
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(10,10,10,.65);z-index:200;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
 .modal-bg.open{display:flex}
 .modal{background:var(--wht);max-width:860px;width:100%;max-height:92vh;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;position:relative}
-.modal-img-col{background:var(--cream);overflow:hidden;min-height:420px}
+.modal-img-col{background:var(--cream);overflow:hidden;min-height:420px;position:relative}
 .modal-img-col img{width:100%;height:100%;object-fit:cover}
 .modal-body{padding:38px 34px;display:flex;flex-direction:column;gap:20px}
 .m-close{position:absolute;top:12px;right:12px;width:38px;height:38px;background:var(--wht);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all var(--tr);z-index:10}
@@ -274,21 +274,86 @@ footer{background:var(--blk);color:var(--wht);padding:56px 32px 32px}
   .hero h1{font-size:52px}
   .deals-content{padding:0 28px}
   .deals-dots{left:28px}
-  .modal{grid-template-columns:1fr}.modal-img-col{aspect-ratio:4/3;min-height:auto}
   .policy-grid{grid-template-columns:1fr}
   .blog-grid{grid-template-columns:1fr}
   .foot-grid{grid-template-columns:1fr;gap:24px}
   .strip{gap:18px}
+
+  /* ── MOBILE MODAL ──────────────────────────────────────
+     Strategy: single-column scroll, image on top, info below.
+     modal-bg is the scroll container — modal itself does NOT scroll.
+     This stops the jumping completely.
+  ── */
+  .modal-bg{
+    padding:0;
+    align-items:flex-start;    /* modal starts at top, bg scrolls */
+    overflow-y:auto;           /* ONLY the bg scrolls */
+  }
+  .modal{
+    grid-template-columns:1fr;
+    width:100%;
+    max-width:100%;
+    max-height:none;           /* no height limit — let content flow */
+    overflow-y:visible;        /* modal itself does NOT scroll */
+    margin:auto 0;             /* push to top */
+  }
+  /* Image: fixed square — stable, no jumping, photo-focused */
+  .modal-img-col{
+    width:100%;
+    height:300px;              /* fixed height — never collapses */
+    min-height:300px;
+    max-height:300px;
+    aspect-ratio:unset;        /* override any aspect-ratio */
+    position:relative;
+  }
+  .modal-gallery{
+    width:100%;
+    height:300px;
+    min-height:300px;
+    position:relative;
+  }
+  .gal-img{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  .gal-btn{width:34px;height:34px;font-size:16px}
+  /* Body */
+  .modal-body{padding:22px 18px 40px;gap:14px;overflow-y:visible}
+  .m-close{top:10px;right:10px;width:34px;height:34px;font-size:16px}
+  .m-pid{font-size:11px}
+  .m-name{font-size:22px;line-height:1.2}
+  .m-price{font-size:22px}
+  .m-desc{font-size:14px;line-height:1.7}
+  .s-btn{width:42px;height:42px;font-size:14px}
+  .qty-row{gap:10px}
+  .q-btn{width:34px;height:34px}
+  .q-num{width:34px;height:34px;font-size:14px}
+  .m-ti{font-size:12px}
+  .btn-cart-lg,.btn-wa-lg{padding:14px;font-size:14px}
 }
+
 @media(max-width:480px){
   .hero-content{padding:0 20px}
-  .hero h1{font-size:44px}
+  .hero h1{font-size:40px}
   .hero-btns{flex-direction:column}
   .btn-hero-primary,.btn-hero-outline{width:100%;justify-content:center}
   .prod-grid{grid-template-columns:repeat(2,1fr);gap:2px}
   .life-grid{grid-template-columns:repeat(2,1fr);gap:2px}
-  .deals-sec{height:400px}
-  .deals-title{font-size:38px}
+  .deals-sec{height:360px}
+  .deals-title{font-size:34px}
+  .deals-content{padding:0 20px}
+
+  /* Product card — square image + compact info */
+  .prod-img-wrap{aspect-ratio:1/1}
+  .prod-info{padding:10px 8px}
+  .prod-name{font-size:13px;margin-bottom:3px;line-height:1.3}
+  .prod-price{font-size:13px}
+  .prod-pid{font-size:9px;margin-bottom:2px}
+  .prod-cat{font-size:9px}
+  .pbadge{font-size:9px;padding:3px 7px}
 }
 
 /* OUT OF STOCK */
@@ -303,7 +368,7 @@ footer{background:var(--blk);color:var(--wht);padding:56px 32px 32px}
 
 /* IMAGE GALLERY IN MODAL */
 .modal-img-col{position:relative;background:var(--cream);overflow:hidden;min-height:420px}
-.modal-gallery{width:100%;height:100%;position:relative}
+.modal-gallery{width:100%;height:100%;min-height:420px;position:relative}
 .gal-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s ease}
 .gal-img.active{opacity:1}
 .gal-btn{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;background:rgba(255,255,255,.9);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;z-index:5;transition:background var(--tr)}
@@ -352,6 +417,34 @@ footer{background:var(--blk);color:var(--wht);padding:56px 32px 32px}
 .tr-date{font-size:12px;color:var(--mid);margin-top:8px}
 .track-error{background:#fff0f0;border:1px solid #ffcccc;padding:20px 24px;color:#c00;font-size:14px;text-align:center;display:none}
 .track-error.show{display:block}
+
+/* TRACK LOADER */
+.track-spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--blk);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* TRACK NOTES */
+.tr-notes-box{background:var(--wht);border:1px solid var(--border);border-left:4px solid var(--accent);padding:14px 18px;margin:4px 0 16px}
+.tr-notes{font-size:15px;font-weight:600;color:var(--blk);line-height:1.6}
+
+/* ── IMAGE LIGHTBOX ──────────────────────────────────────────────────── */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column}
+.lightbox.open{display:flex}
+.lightbox-img-wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.lightbox-img{max-width:100%;max-height:90vh;object-fit:contain;user-select:none;transition:opacity .25s ease}
+.lightbox-img.fade{opacity:0}
+.lightbox-close{position:fixed;top:16px;right:16px;width:40px;height:40px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;cursor:pointer;z-index:10;transition:background .2s}
+.lightbox-close:hover{background:rgba(255,255,255,.25)}
+.lightbox-nav{position:fixed;top:50%;transform:translateY(-50%);width:44px;height:44px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;cursor:pointer;z-index:10;transition:background .2s;display:none}
+.lightbox-nav:hover{background:rgba(255,255,255,.25)}
+.lightbox-prev{left:12px}
+.lightbox-next{right:12px}
+.lightbox-nav.show{display:flex}
+.lightbox-counter{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6);font-size:13px;letter-spacing:.1em;font-family:var(--sans)}
+.lightbox-dots{position:fixed;bottom:52px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
+.lightbox-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:all .2s}
+.lightbox-dot.active{background:#fff;width:20px;border-radius:3px}
+/* tap hint on image */
+.gal-tap-hint{position:absolute;bottom:50px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.45);color:#fff;font-size:11px;letter-spacing:.08em;padding:5px 12px;pointer-events:none;opacity:0;transition:opacity .4s;white-space:nowrap}
+.gal-tap-hint.show{opacity:1}
 </style>
 </head>
 <body>
@@ -403,6 +496,9 @@ footer{background:var(--blk);color:var(--wht);padding:56px 32px 32px}
           <span class="hero-badge">💬 WhatsApp</span>
           <span class="hero-badge">↩ Exchange</span>
         </div>
+        <p style="margin-top:14px;font-size:12px;color:rgba(255,255,255,.45);letter-spacing:.05em">
+          ⭐ 500+ orders delivered &nbsp;·&nbsp; Trusted Indian brand
+        </p>
       </div>
     </div>
   </section>
@@ -641,9 +737,16 @@ footer{background:var(--blk);color:var(--wht);padding:56px 32px 32px}
       <button class="track-submit" onclick="trackOrder()">Track →</button>
     </div>
     <div class="track-error" id="track-error">Order not found. Please check your Order ID and try again.</div>
+    <div class="track-loader" id="track-loader" style="display:none;text-align:center;padding:40px">
+      <div class="track-spinner"></div>
+      <p style="margin-top:16px;font-size:14px;color:var(--mid);letter-spacing:.08em">Looking up your order...</p>
+    </div>
     <div class="track-result" id="track-result">
       <p class="tr-order-id" id="tr-id"></p>
       <span class="tr-status" id="tr-status"></span>
+      <div class="tr-notes-box" id="tr-notes-box" style="display:none">
+        <p class="tr-notes" id="tr-notes"></p>
+      </div>
       <p class="tr-items" id="tr-items"></p>
       <p class="tr-total" id="tr-total"></p>
       <p class="tr-date" id="tr-date"></p>
@@ -725,7 +828,11 @@ footer{background:var(--blk);color:var(--wht);padding:56px 32px 32px}
   </div>
 </div>
 
-<a href="https://wa.me/919558875322?text=Hi%2C+I+have+a+question+about+FORME." class="wa-float" target="_blank">💬</a>
+<a href="https://wa.me/919558875322?text=Hi%2C+I+have+a+question+about+FORME." class="wa-float" target="_blank" title="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24" width="28" height="28" fill="white" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
 <div class="toast" id="toast"></div>
 
 <script data-cfasync="false">
@@ -1012,6 +1119,17 @@ function showPage(pg, cat) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('pg-'+pg).classList.add('active');
   window.scrollTo(0,0);
+  // Reset track page when navigating away
+  if (pg !== 'track') {
+    const ti = document.getElementById('track-input');
+    const tr = document.getElementById('track-result');
+    const te = document.getElementById('track-error');
+    const tl = document.getElementById('track-loader');
+    if (ti) ti.value = '';
+    if (tr) tr.classList.remove('show');
+    if (te) te.classList.remove('show');
+    if (tl) tl.style.display = 'none';
+  }
   if (pg === 'home') renderHomeGrid();
   if (pg === 'shop') {
     renderShopGrid(cat||'all');
@@ -1115,6 +1233,9 @@ function initGallery(images) {
     img.alt = 'Product image ' + (i+1);
     img.className = 'gal-img' + (i === 0 ? ' active' : '');
     img.loading = 'lazy';
+    img.style.cursor = 'zoom-in';
+    img.title = 'Tap to view full size';
+    img.onclick = (e) => { e.stopPropagation(); openLightbox(i); };
     gallery.appendChild(img);
 
     const dot = document.createElement('div');
@@ -1128,6 +1249,17 @@ function initGallery(images) {
   next.style.display  = multi ? 'flex' : 'none';
   count.style.display = multi ? 'block' : 'none';
   if (multi) count.textContent = '1 / ' + images.length;
+
+  // Show tap-to-zoom hint briefly
+  let hint = gallery.parentElement.querySelector('.gal-tap-hint');
+  if (!hint) {
+    hint = document.createElement('div');
+    hint.className = 'gal-tap-hint';
+    hint.textContent = '🔍 Tap image to zoom';
+    gallery.parentElement.appendChild(hint);
+  }
+  setTimeout(() => hint.classList.add('show'), 600);
+  setTimeout(() => hint.classList.remove('show'), 2800);
 }
 
 function galGoTo(idx) {
@@ -1176,10 +1308,23 @@ function openMod(id) {
   ).join('');
 
   document.getElementById('modal-bg').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  // Prevent background scroll without causing layout jump
+  const scrollY = window.scrollY;
+  document.body.style.position = 'fixed';
+  document.body.style.top = '-' + scrollY + 'px';
+  document.body.style.width = '100%';
+  document.body.dataset.scrollY = scrollY;
 }
 function closeMod(e) { if (e.target === document.getElementById('modal-bg')) closeModDirect(); }
-function closeModDirect() { document.getElementById('modal-bg').classList.remove('open'); document.body.style.overflow=''; }
+function closeModDirect() {
+  document.getElementById('modal-bg').classList.remove('open');
+  // Restore scroll position without jump
+  const scrollY = document.body.dataset.scrollY || 0;
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.width = '';
+  window.scrollTo(0, parseInt(scrollY));
+}
 function selSize(s,btn) { curSize=s; document.querySelectorAll('.s-btn').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); }
 function chgQty(d) { curQty=Math.max(1,curQty+d); document.getElementById('mod-qty').textContent=curQty; }
 
@@ -1292,12 +1437,15 @@ function goTrackOrder() {
 
 // ── TRACK ORDER ────────────────────────────────────────────────────────────
 async function trackOrder() {
-  const input = document.getElementById('track-input').value.trim().toUpperCase();
-  const resultEl = document.getElementById('track-result');
-  const errorEl  = document.getElementById('track-error');
+  const input     = document.getElementById('track-input').value.trim().toUpperCase();
+  const resultEl  = document.getElementById('track-result');
+  const errorEl   = document.getElementById('track-error');
+  const loaderEl  = document.getElementById('track-loader');
 
+  // Reset everything first
   resultEl.classList.remove('show');
   errorEl.classList.remove('show');
+  loaderEl.style.display = 'none';
 
   if (!input) { showToast('Please enter an Order ID'); return; }
 
@@ -1307,9 +1455,14 @@ async function trackOrder() {
     return;
   }
 
+  // Show loader
+  loaderEl.style.display = 'block';
+
   try {
     const res  = await fetch(bustUrl(SHEET_API + '?action=track&orderId=' + encodeURIComponent(input)));
     const data = await res.json();
+
+    loaderEl.style.display = 'none';
 
     if (!data.success || !data.order) {
       errorEl.textContent = 'Order not found. Please check your Order ID and try again.';
@@ -1318,17 +1471,29 @@ async function trackOrder() {
     }
 
     const order = data.order;
-    document.getElementById('tr-id').textContent     = 'Order ID: ' + order.id;
-    document.getElementById('tr-items').textContent  = order.items;
-    document.getElementById('tr-total').textContent  = 'Total: ' + order.total;
-    document.getElementById('tr-date').textContent   = 'Placed on: ' + order.timestamp;
+    document.getElementById('tr-id').textContent    = 'Order ID: ' + order.id;
+    document.getElementById('tr-items').textContent = order.items;
+    document.getElementById('tr-total').textContent = 'Total: ' + order.total;
+    document.getElementById('tr-date').textContent  = 'Placed on: ' + order.timestamp;
 
+    // Status badge
     const statusEl = document.getElementById('tr-status');
-    statusEl.textContent  = order.status;
-    statusEl.className    = 'tr-status ' + order.status.toLowerCase().replace(/\s+/g, '-');
+    statusEl.textContent = order.status;
+    statusEl.className   = 'tr-status ' + order.status.toLowerCase().replace(/\s+/g, '-');
+
+    // Notes — show in bold below status if present
+    const notesBox = document.getElementById('tr-notes-box');
+    const notesEl  = document.getElementById('tr-notes');
+    if (order.notes && order.notes.trim()) {
+      notesEl.textContent    = '📌 ' + order.notes.trim();
+      notesBox.style.display = 'block';
+    } else {
+      notesBox.style.display = 'none';
+    }
 
     resultEl.classList.add('show');
   } catch(err) {
+    loaderEl.style.display = 'none';
     errorEl.textContent = 'Could not connect. Please try again shortly.';
     errorEl.classList.add('show');
   }
@@ -1383,9 +1548,97 @@ loadFromSheets().then(() => {
   console.warn('Sheets load error:', err);
 });
 
+// ── LIGHTBOX ───────────────────────────────────────────────────────────────
+let lbIdx   = 0;
+let lbImgs  = [];
+let lbStartX = 0;
+
+function openLightbox(startIdx) {
+  lbImgs = [...galImages];
+  lbIdx  = startIdx || 0;
+  if (!lbImgs.length) return;
+
+  const lb      = document.getElementById('lightbox');
+  const img     = document.getElementById('lightbox-img');
+  const dotsEl  = document.getElementById('lightbox-dots');
+  const counter = document.getElementById('lightbox-counter');
+  const prev    = document.getElementById('lb-prev');
+  const next    = document.getElementById('lb-next');
+
+  // Build dots
+  dotsEl.innerHTML = '';
+  lbImgs.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'lightbox-dot' + (i === lbIdx ? ' active' : '');
+    d.onclick = (e) => { e.stopPropagation(); lbGoTo(i); };
+    dotsEl.appendChild(d);
+  });
+
+  const multi = lbImgs.length > 1;
+  prev.classList.toggle('show', multi);
+  next.classList.toggle('show', multi);
+  dotsEl.style.display = multi ? 'flex' : 'none';
+
+  // Show image
+  img.src = lbImgs[lbIdx];
+  counter.textContent = (lbIdx + 1) + ' / ' + lbImgs.length;
+
+  lb.classList.add('open');
+
+  // Touch/swipe support
+  const wrap = document.getElementById('lightbox-img-wrap');
+  wrap.ontouchstart = (e) => { lbStartX = e.touches[0].clientX; };
+  wrap.ontouchend   = (e) => {
+    const diff = lbStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) lbNav(diff > 0 ? 1 : -1);
+  };
+}
+
+function lbGoTo(idx) {
+  lbIdx = (idx + lbImgs.length) % lbImgs.length;
+  const img = document.getElementById('lightbox-img');
+  img.classList.add('fade');
+  setTimeout(() => {
+    img.src = lbImgs[lbIdx];
+    img.classList.remove('fade');
+  }, 220);
+  document.getElementById('lightbox-counter').textContent = (lbIdx + 1) + ' / ' + lbImgs.length;
+  document.querySelectorAll('.lightbox-dot').forEach((d, i) => d.classList.toggle('active', i === lbIdx));
+}
+
+function lbNav(dir) { lbGoTo(lbIdx + dir); }
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+function lightboxBgClick(e) {
+  if (e.target === document.getElementById('lightbox') ||
+      e.target === document.getElementById('lightbox-img-wrap')) {
+    closeLightbox();
+  }
+}
+
+// Close lightbox on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeLightbox();
+});
+
 </script>
 <script>
 // Set email link — split so Cloudflare email scann
 </script>
+<!-- IMAGE LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="lightboxBgClick(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <div class="lightbox-img-wrap" id="lightbox-img-wrap">
+    <img class="lightbox-img" id="lightbox-img" src="" alt="Product image">
+  </div>
+  <button class="lightbox-nav lightbox-prev" id="lb-prev" onclick="lbNav(-1)">‹</button>
+  <button class="lightbox-nav lightbox-next" id="lb-next" onclick="lbNav(1)">›</button>
+  <div class="lightbox-dots" id="lightbox-dots"></div>
+  <div class="lightbox-counter" id="lightbox-counter"></div>
+</div>
+
 </body>
 </html>
