@@ -484,6 +484,10 @@ footer{background:var(--blk);color:var(--wht);padding:56px 32px 32px}
 .iti{width:100%}
 .iti__flag-container{top:0;bottom:0}
 .cf-input.iti__tel-input{padding-left:52px}
+
+/* SKELETON SHIMMER */
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.prod-img-wrap[style*="shimmer"]{aspect-ratio:3/4}
 </style>
 </head>
 <body>
@@ -981,9 +985,7 @@ async function loadFromSheets() {
   } catch(err) {
     console.warn('Sheets not available, using local data:', err.message);
   }
-
-  // Re-render grids with fresh data
-  renderHomeGrid();
+  // Note: renderHomeGrid() is called by the caller after this resolves
 }
 
 function applySettings(s) {
@@ -1124,21 +1126,34 @@ function resetDealTimer() {
 }
 
 // ── NAVIGATION ─────────────────────────────────────────────────────────────
+function resetTrackPage() {
+  const ti = document.getElementById('track-input');
+  const tr = document.getElementById('track-result');
+  const te = document.getElementById('track-error');
+  const tl = document.getElementById('track-loader');
+  const tc = document.getElementById('tr-customer');
+  if (ti) ti.value = '';
+  if (tr) tr.classList.remove('show');
+  if (te) te.classList.remove('show');
+  if (tl) tl.style.display = 'none';
+  if (tc) tc.textContent = '';
+  // Clear all result fields
+  ['tr-id','tr-items','tr-total','tr-date','tr-notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '';
+  });
+  const nb = document.getElementById('tr-notes-box');
+  if (nb) nb.style.display = 'none';
+  const st = document.getElementById('tr-status');
+  if (st) { st.textContent = ''; st.className = 'tr-status'; }
+}
+
 function showPage(pg, cat) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('pg-'+pg).classList.add('active');
   window.scrollTo(0,0);
-  // Reset track page when navigating away
-  if (pg !== 'track') {
-    const ti = document.getElementById('track-input');
-    const tr = document.getElementById('track-result');
-    const te = document.getElementById('track-error');
-    const tl = document.getElementById('track-loader');
-    if (ti) ti.value = '';
-    if (tr) tr.classList.remove('show');
-    if (te) te.classList.remove('show');
-    if (tl) tl.style.display = 'none';
-  }
+  // Always reset track page — whether arriving or leaving
+  resetTrackPage();
   if (pg === 'home') renderHomeGrid();
   if (pg === 'shop') {
     renderShopGrid(cat||'all');
@@ -1208,10 +1223,35 @@ function prodCard(p) {
     </div>
   </div>`;
 }
+function skeletonCard() {
+  return `<div class="prod-card" style="pointer-events:none">
+    <div class="prod-img-wrap" style="background:linear-gradient(90deg,#f0ece4 25%,#e8e2d8 50%,#f0ece4 75%);background-size:200% 100%;animation:shimmer 1.4s infinite">
+    </div>
+    <div class="prod-info">
+      <div style="height:10px;width:40%;background:#e8e2d8;border-radius:2px;margin-bottom:8px;animation:shimmer 1.4s infinite"></div>
+      <div style="height:16px;width:75%;background:#e8e2d8;border-radius:2px;margin-bottom:10px;animation:shimmer 1.4s infinite"></div>
+      <div style="height:14px;width:30%;background:#e8e2d8;border-radius:2px;animation:shimmer 1.4s infinite"></div>
+    </div>
+  </div>`;
+}
+
+function showGridSkeleton(gridId, count) {
+  const g = document.getElementById(gridId);
+  if (g) g.innerHTML = Array(count).fill(0).map(skeletonCard).join('');
+}
+
 function renderHomeGrid() {
   const g = document.getElementById('home-grid');
   if (!g) return;
-  g.innerHTML = PRODUCTS.filter(p => ['BZ001','GT001','CS001','ET001'].includes(p.id)).map(prodCard).join('');
+  if (!PRODUCTS.length) {
+    // Show 4 skeleton cards while waiting for Sheets
+    showGridSkeleton('home-grid', 4);
+    return;
+  }
+  // Try featured IDs first, fallback to first 4 products
+  let featured = PRODUCTS.filter(p => ['BZ001','GT001','CS001','ET001'].includes(p.id));
+  if (!featured.length) featured = PRODUCTS.slice(0, 4);
+  g.innerHTML = featured.map(prodCard).join('');
 }
 function renderShopGrid(cat) {
   const filtered = cat === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === cat);
@@ -1669,6 +1709,8 @@ function hideLoader(instant) {
 // If returning visitor this session — hide loader instantly, no delay
 if (!isFirstLoad) {
   hideLoader(true);
+  // Show skeletons immediately so grid isn't blank while Sheets loads
+  showGridSkeleton('home-grid', 4);
 }
 
 // Load from Sheets
