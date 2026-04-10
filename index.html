@@ -7,6 +7,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>FORME — Wear Your Life</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -466,9 +467,32 @@ footer{background:var(--blk);color:var(--wht);padding:56px 32px 32px}
   .cust-form-box{padding:28px 20px}
   .cf-title{font-size:22px}
 }
+
+/* ── PAGE LOADER ───────────────────────────────────────────────────── */
+#page-loader{
+  position:fixed;inset:0;background:var(--cream);z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .5s ease;
+}
+#page-loader.hide{opacity:0;pointer-events:none}
+.loader-logo{font-family:var(--serif);font-size:42px;font-weight:300;letter-spacing:.25em;text-transform:uppercase;color:var(--blk);margin-bottom:32px}
+.loader-logo em{font-style:italic;color:var(--accent-dark)}
+.loader-ring{width:36px;height:36px;border:2.5px solid var(--border);border-top-color:var(--accent-dark);border-radius:50%;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* intl-tel-input overrides */
+.iti{width:100%}
+.iti__flag-container{top:0;bottom:0}
+.cf-input.iti__tel-input{padding-left:52px}
 </style>
 </head>
 <body>
+
+<!-- PAGE LOADER -->
+<div id="page-loader">
+  <div class="loader-logo">FOR<em>ME</em></div>
+  <div class="loader-ring"></div>
+</div>
 
 <div class="ann">🚚 Free shipping on orders above ₹999 <span>·</span> Prepaid only <span>·</span> 3–5 day delivery pan India</div>
 
@@ -763,6 +787,7 @@ footer{background:var(--blk);color:var(--wht);padding:56px 32px 32px}
       <p style="margin-top:16px;font-size:14px;color:var(--mid);letter-spacing:.08em">Looking up your order...</p>
     </div>
     <div class="track-result" id="track-result">
+      <p class="tr-customer" id="tr-customer" style="font-size:18px;font-family:var(--serif);font-weight:300;margin-bottom:4px"></p>
       <p class="tr-order-id" id="tr-id"></p>
       <span class="tr-status" id="tr-status"></span>
       <div class="tr-notes-box" id="tr-notes-box" style="display:none">
@@ -1385,18 +1410,34 @@ function checkoutWA() {
 // ── CUSTOMER DETAILS FORM ─────────────────────────────────────────────────
 let cfMode = 'single'; // 'single' or 'cart'
 
+let itiInstance = null;
+
 function openCustomerForm(summaryHtml, mode) {
   cfMode = mode;
   document.getElementById('cf-summary').innerHTML = summaryHtml;
+
+  // Init intl-tel-input if not already done
+  const phoneInput = document.getElementById('cf-phone');
+  if (!itiInstance && typeof intlTelInput !== 'undefined') {
+    itiInstance = intlTelInput(phoneInput, {
+      initialCountry: 'in',          // Default India
+      preferredCountries: ['in','ae','us','gb','sg','au'],
+      utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js',
+      separateDialCode: true,
+    });
+  }
+
   // Pre-fill from localStorage if returning customer
   const saved = JSON.parse(localStorage.getItem('forme_customer') || '{}');
-  if (saved.name)  document.getElementById('cf-name').value  = saved.name;
-  if (saved.phone) document.getElementById('cf-phone').value = saved.phone;
+  if (saved.name)  document.getElementById('cf-name').value = saved.name;
+  if (saved.phone && itiInstance) itiInstance.setNumber(saved.phone);
+  else if (saved.phone) phoneInput.value = saved.phone;
+
   // Clear errors
   document.getElementById('cf-name-err').classList.remove('show');
   document.getElementById('cf-phone-err').classList.remove('show');
   document.getElementById('cf-name').classList.remove('error');
-  document.getElementById('cf-phone').classList.remove('error');
+  phoneInput.classList.remove('error');
   document.getElementById('cust-form-bg').classList.add('open');
 }
 
@@ -1406,7 +1447,14 @@ function closeCustomerForm() {
 
 function submitCustomerForm() {
   const name  = document.getElementById('cf-name').value.trim();
-  const phone = document.getElementById('cf-phone').value.trim().replace(/[^0-9]/g,'');
+  // Get full international number from iti, fallback to raw input
+  let phone = '';
+  const phoneInput = document.getElementById('cf-phone');
+  if (itiInstance) {
+    phone = itiInstance.getNumber(); // e.g. +919876543210
+  } else {
+    phone = phoneInput.value.trim();
+  }
   let valid = true;
 
   // Validate name
@@ -1419,19 +1467,23 @@ function submitCustomerForm() {
     document.getElementById('cf-name-err').classList.remove('show');
   }
 
-  // Validate phone — 10 digits
-  if (phone.length < 10) {
-    document.getElementById('cf-phone').classList.add('error');
+  // Validate phone using iti if available, else basic check
+  const phoneValid = itiInstance
+    ? itiInstance.isValidNumber()
+    : phone.replace(/[^0-9]/g,'').length >= 7;
+
+  if (!phoneValid) {
+    phoneInput.classList.add('error');
     document.getElementById('cf-phone-err').classList.add('show');
     valid = false;
   } else {
-    document.getElementById('cf-phone').classList.remove('error');
+    phoneInput.classList.remove('error');
     document.getElementById('cf-phone-err').classList.remove('show');
   }
 
   if (!valid) return;
 
-  // Save for next time
+  // Save for next time (save full intl number)
   localStorage.setItem('forme_customer', JSON.stringify({ name, phone }));
 
   // Close form
@@ -1531,6 +1583,15 @@ async function trackOrder() {
     }
 
     const order = data.order;
+
+    // Customer greeting
+    const custEl = document.getElementById('tr-customer');
+    if (custEl) {
+      custEl.textContent = order.customerName
+        ? 'Hello, ' + order.customerName + ' 👋'
+        : '';
+    }
+
     document.getElementById('tr-id').textContent    = 'Order ID: ' + order.id;
     document.getElementById('tr-items').textContent = order.items;
     document.getElementById('tr-total').textContent = 'Total: ' + order.total;
@@ -1541,7 +1602,7 @@ async function trackOrder() {
     statusEl.textContent = order.status;
     statusEl.className   = 'tr-status ' + order.status.toLowerCase().replace(/\s+/g, '-');
 
-    // Notes — show in bold below status if present
+    // Notes (col G) — staff comment shown to customer
     const notesBox = document.getElementById('tr-notes-box');
     const notesEl  = document.getElementById('tr-notes');
     if (order.notes && order.notes.trim()) {
@@ -1585,12 +1646,37 @@ window.addEventListener('pageshow', (e) => {
 });
 
 // ── INIT ──────────────────────────────────────────────────────────────────
-renderHomeGrid();
 saveCart();
-initDeals();
 
-// Load fresh data from Google Sheets (cache-busted)
+// ── LOADER LOGIC ──────────────────────────────────────────────────────────
+// Show loader only on first visit of a session (not on every refresh)
+// sessionStorage clears when tab is closed — so loader shows once per session
+const isFirstLoad = !sessionStorage.getItem('forme_loaded');
+
+function hideLoader(instant) {
+  const loader = document.getElementById('page-loader');
+  if (!loader) return;
+  if (instant) {
+    // Skip animation — remove immediately
+    loader.style.display = 'none';
+    if (loader.parentNode) loader.parentNode.removeChild(loader);
+  } else {
+    loader.classList.add('hide');
+    setTimeout(() => { if (loader.parentNode) loader.parentNode.removeChild(loader); }, 600);
+  }
+}
+
+// If returning visitor this session — hide loader instantly, no delay
+if (!isFirstLoad) {
+  hideLoader(true);
+}
+
+// Load from Sheets
+const loaderTimeout = isFirstLoad ? setTimeout(() => hideLoader(false), 8000) : null;
+
 loadFromSheets().then(() => {
+  if (loaderTimeout) clearTimeout(loaderTimeout);
+
   if (DEALS_DATA && DEALS_DATA.length > 0) {
     const dealsEl = document.getElementById('deals');
     if (dealsEl) {
@@ -1601,11 +1687,24 @@ loadFromSheets().then(() => {
       clearInterval(dealTimer);
       DEALS.length = 0;
       DEALS_DATA.forEach(d => DEALS.push(d));
-      initDeals();
     }
   }
+
+  initDeals();
+  renderHomeGrid();
+
+  // Mark session as loaded — skip loader on next refresh
+  sessionStorage.setItem('forme_loaded', '1');
+
+  if (isFirstLoad) hideLoader(false);
+
 }).catch(err => {
+  if (loaderTimeout) clearTimeout(loaderTimeout);
   console.warn('Sheets load error:', err);
+  initDeals();
+  renderHomeGrid();
+  sessionStorage.setItem('forme_loaded', '1');
+  if (isFirstLoad) hideLoader(false);
 });
 
 // ── LIGHTBOX ───────────────────────────────────────────────────────────────
@@ -1696,13 +1795,13 @@ document.addEventListener('keydown', (e) => {
     <div class="cf-order-summary" id="cf-summary"></div>
     <div class="cf-field">
       <label class="cf-label">Your Name</label>
-      <input class="cf-input" id="cf-name" type="text" placeholder="e.g. Rahul Sharma" maxlength="60">
+      <input class="cf-input" id="cf-name" type="text" placeholder="Your Name" maxlength="60">
       <span class="cf-error" id="cf-name-err">Please enter your name</span>
     </div>
     <div class="cf-field">
       <label class="cf-label">WhatsApp Number</label>
-      <input class="cf-input" id="cf-phone" type="tel" placeholder="e.g. 9876543210" maxlength="15">
-      <span class="cf-error" id="cf-phone-err">Please enter a valid 10-digit number</span>
+      <input class="cf-input" id="cf-phone" type="tel" placeholder="Phone number">
+      <span class="cf-error" id="cf-phone-err">Please enter a valid phone number</span>
     </div>
     <div class="cf-btns">
       <button class="btn-wa-lg" id="cf-submit-btn" onclick="submitCustomerForm()">💬 Proceed to WhatsApp</button>
@@ -1722,6 +1821,8 @@ document.addEventListener('keydown', (e) => {
   <div class="lightbox-dots" id="lightbox-dots"></div>
   <div class="lightbox-counter" id="lightbox-counter"></div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js"></script>
 
 </body>
 </html>
