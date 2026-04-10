@@ -445,6 +445,27 @@ footer{background:var(--blk);color:var(--wht);padding:56px 32px 32px}
 /* tap hint on image */
 .gal-tap-hint{position:absolute;bottom:50px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.45);color:#fff;font-size:11px;letter-spacing:.08em;padding:5px 12px;pointer-events:none;opacity:0;transition:opacity .4s;white-space:nowrap}
 .gal-tap-hint.show{opacity:1}
+
+/* ── CUSTOMER DETAILS FORM ──────────────────────────────────────────── */
+.cust-form-bg{display:none;position:fixed;inset:0;background:rgba(10,10,10,.65);z-index:450;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.cust-form-bg.open{display:flex}
+.cust-form-box{background:var(--wht);max-width:420px;width:100%;padding:36px 32px}
+.cf-title{font-family:var(--serif);font-size:26px;font-weight:300;margin-bottom:6px}
+.cf-sub{font-size:14px;color:var(--textl);margin-bottom:28px;line-height:1.5}
+.cf-field{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+.cf-label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;color:var(--blk)}
+.cf-input{padding:13px 16px;border:1px solid var(--border);font-size:15px;font-family:var(--sans);outline:none;transition:border-color var(--tr);background:var(--wht)}
+.cf-input:focus{border-color:var(--blk)}
+.cf-input.error{border-color:#c44}
+.cf-error{font-size:12px;color:#c44;display:none}
+.cf-error.show{display:block}
+.cf-order-summary{background:var(--cream);border:1px solid var(--border);padding:14px 16px;margin-bottom:24px;font-size:13px;color:var(--textl);line-height:1.7}
+.cf-order-summary strong{color:var(--blk);font-weight:500}
+.cf-btns{display:flex;flex-direction:column;gap:8px}
+@media(max-width:480px){
+  .cust-form-box{padding:28px 20px}
+  .cf-title{font-size:22px}
+}
 </style>
 </head>
 <body>
@@ -836,8 +857,9 @@ footer{background:var(--blk);color:var(--wht);padding:56px 32px 32px}
 <div class="toast" id="toast"></div>
 
 <script data-cfasync="false">
-// ── EDIT THIS ──
-const WA_NUMBER = '919558875322'; // replace with your number
+// WA number loaded from Google Sheets Settings tab (wa_number key)
+// Never hardcoded in source — change it anytime in your Sheet
+let WA_NUMBER = ''; // populated from Sheets on load
 
 // ── GOOGLE SHEETS API ─────────────────────────────────────────────────────
 // After deploying your Apps Script, paste the Web App URL here:
@@ -877,52 +899,9 @@ const DEALS = [
   },
 ];
 
-// ── FALLBACK PRODUCTS (used when Sheets not connected yet) ───────────────
-// Once SHEET_API is set above, products load from Google Sheets instead
-const FALLBACK_PRODUCTS = [
-   {id:'SH001',name:'Oxford Button-Down Shirt',price:999,cat:'office',badge:'new',
-   img:'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=700&q=80&fit=crop',
-   desc:'Classic Oxford fabric with slim contemporary fit. 100% premium cotton. Perfect for formal and semi-formal settings.'},
-  {id:'TR001',name:'Slim Fit Trousers',price:1299,cat:'office',badge:'',
-   img:'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=700&q=80&fit=crop',
-   desc:'Tailored slim-fit trousers in stretch fabric. Wrinkle-resistant. Mid-rise waist with tapered leg.'},
-  {id:'BZ001',name:'Unstructured Blazer',price:2499,cat:'office',badge:'hot',
-   img:'https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?q?w=700&q=80&fit=crop',
-   desc:'Lightweight unstructured blazer. Looks polished, feels like a casual jacket. Machine washable.'},
-  {id:'GS001',name:'Compression Shorts',price:699,cat:'gym',badge:'new',
-   img:'https://images.unsplash.com/photo-1747213848474-b89023221e20?w=700&q=80&fit=crop',
-   desc:'High-performance compression shorts with 4-way stretch. Moisture-wicking. Flatlock seams prevent chafing.'},
-  {id:'GT001',name:'Dry-Fit Training Tee',price:599,cat:'gym',badge:'',
-   img:'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=700&q=80&fit=crop',
-   desc:'Ultra-lightweight dry-fit tee. Sweat-wicking with breathable mesh panels. Your go-to training companion.'},
-  {id:'GJ001',name:'Jogger Track Pants',price:899,cat:'gym',badge:'hot',
-   img:'https://images.unsplash.com/photo-1711175017307-bbacf7c2ca13?w=700&q=80&fit=crop',
-   desc:'Versatile jogger pants for gym or casual wear. Elastic waist, deep pockets, tapered fit with ribbed cuffs.'},
-  {id:'BJ001',name:'Women`s Ultra soft Joggers',price:899,cat:'gym',badge:'hot',
-   img:'https://images.unsplash.com/photo-1628257087270-185e1d5d6744?w=700&q=80&fit=crop',
-   desc:'Women`s jogger pants for gym or casual wear. Elastic waist, deep pockets, tapered fit with ribbed cuffs.'},   
-  {id:'CS001',name:'Oversized Graphic Tee',price:549,cat:'college',badge:'new',
-   img:'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=700&q=80&fit=crop',
-   desc:"Boxy oversized fit with bold minimal graphics. 100% combed cotton. The tee you'll wear on repeat."},
-  {id:'CJ001',name:'Casual Denim Jacket',price:1799,cat:'college',badge:'',
-   img:'https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=700&q=80&fit=crop',
-   desc:'Lightweight denim jacket with relaxed fit. Perfect layering piece. Chest pockets and washed finish.'},
-  {id:'CH001',name:'Everyday Chinos',price:999,cat:'college',badge:'',
-   img:'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=700&q=80&fit=crop',
-   desc:'Stretch chinos that work everywhere. Slim through thigh, tapered at ankle. The smarter alternative to jeans.'},
-  {id:'ET001',name:'Essential Linen Tee',price:699,cat:'everyday',badge:'new',
-   img:'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=700&q=80&fit=crop',
-   desc:'Breathable linen-cotton blend perfect for Indian summers. Relaxed fit with slightly dropped shoulders.'},
-  {id:'ES001',name:'Weekend Shorts',price:799,cat:'everyday',badge:'hot',
-   img:'https://images.unsplash.com/photo-1562183241-b937e95585b6?w=700&q=80&fit=crop',
-   desc:'Easy weekend shorts with elastic waist and side pockets. Beach, market, or lazy Sunday. Quick-dry fabric.'},
-  {id:'EK001',name:'Knit Polo Shirt',price:899,cat:'everyday',badge:'',
-   img:'https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?w=700&q=80&fit=crop',
-   desc:'Refined knit polo with classic 3-button placket. Pique cotton with stretch. Dress up or dress down.'},
-];
-
-// ── LIVE DATA (populated from Sheets or fallback) ─────────────────────────
-let PRODUCTS = [...FALLBACK_PRODUCTS];
+// ── PRODUCTS — loaded from Google Sheets ────────────────────────────────
+// No hardcoded products. All products managed via Google Sheets.
+let PRODUCTS = [];
 let DEALS_DATA = null; // Will be set from Sheets or use JS defaults
 
 // ── STATE ──────────────────────────────────────────────────────────────────
@@ -983,6 +962,13 @@ async function loadFromSheets() {
 }
 
 function applySettings(s) {
+  // Load WA number from Sheets — never hardcoded in source
+  if (s.wa_number) {
+    WA_NUMBER = s.wa_number.replace(/[^0-9]/g, ''); // digits only
+    // Update WA float button href
+    const waFloat = document.querySelector('.wa-float');
+    if (waFloat) waFloat.href = 'https://wa.me/' + WA_NUMBER + '?text=Hi%2C+I+have+a+question+about+FORME.';
+  }
   if (s.announcement) {
     const ann = document.querySelector('.ann');
     if (ann) ann.innerHTML = '🚚 ' + s.announcement;
@@ -1012,15 +998,11 @@ function applySettings(s) {
 }
 
 // ── LOG ORDER TO SHEETS ───────────────────────────────────────────────────
-async function logOrderToSheets(items, total) {
-  // Generate local order ID as fallback
+async function logOrderToSheets(items, total, custName, custPhone) {
   const localOrderId = 'ORD-' + Date.now().toString().slice(-6);
-
   if (!USE_SHEETS) return localOrderId;
 
   try {
-    // Use text/plain content-type to avoid CORS preflight
-    // GAS can parse this just fine with JSON.parse(e.postData.contents)
     const res = await fetch(SHEET_API, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
@@ -1029,13 +1011,15 @@ async function logOrderToSheets(items, total) {
         items: items,
         total: total,
         waNumber: WA_NUMBER,
+        customerName:  custName  || '',
+        customerPhone: custPhone || '',
       }),
     });
     const data = await res.json();
     return data.orderId || localOrderId;
   } catch(err) {
     console.warn('Could not log order to Sheets:', err.message);
-    return localOrderId; // Still give customer an order ID
+    return localOrderId;
   }
 }
 
@@ -1384,34 +1368,110 @@ function toggleCart() {
 function orderWA() {
   if(!curProd) return;
   if(!curSize){showToast('Please select a size!');return;}
+  // Show customer details form first
+  const total = curProd.price * curQty;
+  const summary = `${curProd.name} · Size: ${curSize} · Qty: ${curQty} · <strong>₹${total.toLocaleString('en-IN')}</strong>`;
+  openCustomerForm(summary, 'single');
+}
+function checkoutWA() {
+  if(!cart.length) return;
+  const total = cart.reduce((a,i)=>a+i.price*i.qty,0);
+  const summary = `${cart.length} item${cart.length>1?'s':''} · <strong>₹${total.toLocaleString('en-IN')}</strong>`;
+  openCustomerForm(summary, 'cart');
+}
+
+
+
+// ── CUSTOMER DETAILS FORM ─────────────────────────────────────────────────
+let cfMode = 'single'; // 'single' or 'cart'
+
+function openCustomerForm(summaryHtml, mode) {
+  cfMode = mode;
+  document.getElementById('cf-summary').innerHTML = summaryHtml;
+  // Pre-fill from localStorage if returning customer
+  const saved = JSON.parse(localStorage.getItem('forme_customer') || '{}');
+  if (saved.name)  document.getElementById('cf-name').value  = saved.name;
+  if (saved.phone) document.getElementById('cf-phone').value = saved.phone;
+  // Clear errors
+  document.getElementById('cf-name-err').classList.remove('show');
+  document.getElementById('cf-phone-err').classList.remove('show');
+  document.getElementById('cf-name').classList.remove('error');
+  document.getElementById('cf-phone').classList.remove('error');
+  document.getElementById('cust-form-bg').classList.add('open');
+}
+
+function closeCustomerForm() {
+  document.getElementById('cust-form-bg').classList.remove('open');
+}
+
+function submitCustomerForm() {
+  const name  = document.getElementById('cf-name').value.trim();
+  const phone = document.getElementById('cf-phone').value.trim().replace(/[^0-9]/g,'');
+  let valid = true;
+
+  // Validate name
+  if (!name) {
+    document.getElementById('cf-name').classList.add('error');
+    document.getElementById('cf-name-err').classList.add('show');
+    valid = false;
+  } else {
+    document.getElementById('cf-name').classList.remove('error');
+    document.getElementById('cf-name-err').classList.remove('show');
+  }
+
+  // Validate phone — 10 digits
+  if (phone.length < 10) {
+    document.getElementById('cf-phone').classList.add('error');
+    document.getElementById('cf-phone-err').classList.add('show');
+    valid = false;
+  } else {
+    document.getElementById('cf-phone').classList.remove('error');
+    document.getElementById('cf-phone-err').classList.remove('show');
+  }
+
+  if (!valid) return;
+
+  // Save for next time
+  localStorage.setItem('forme_customer', JSON.stringify({ name, phone }));
+
+  // Close form
+  closeCustomerForm();
+
+  if (cfMode === 'single') {
+    placeOrderSingle(name, phone);
+  } else {
+    placeOrderCart(name, phone);
+  }
+}
+
+function placeOrderSingle(custName, custPhone) {
+  if(!curProd || !curSize) return;
   const total = curProd.price * curQty;
   const items = [{id:curProd.id, name:curProd.name, price:curProd.price, size:curSize, qty:curQty}];
-  const msg = `Hi, I want to order from FORME:\n\nProduct ID: ${curProd.id}\nProduct: ${curProd.name}\nSize: ${curSize}\nQuantity: ${curQty}\nTotal: ₹${total.toLocaleString('en-IN')}\n\nPlease share UPI details for payment.`;
+  const msg = `Hi, I want to order from FORME:\n\nName: ${custName}\nPhone: ${custPhone}\n\nProduct ID: ${curProd.id}\nProduct: ${curProd.name}\nSize: ${curSize}\nQuantity: ${curQty}\nTotal: ₹${total.toLocaleString('en-IN')}\n\nPlease share UPI details for payment.`;
 
-  // Log to Sheets and get order ID
-  logOrderToSheets(items, total).then(orderId => {
+  logOrderToSheets(items, total, custName, custPhone).then(orderId => {
     closeModDirect();
     window.open('https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent(msg),'_blank');
     showOrderConfirm(orderId);
   });
 }
-function checkoutWA() {
+
+function placeOrderCart(custName, custPhone) {
   if(!cart.length) return;
   const itemsText = cart.map(i=>`• ${i.name} (${i.id}) | Size: ${i.size} | Qty: ${i.qty} | ₹${(i.price*i.qty).toLocaleString('en-IN')}`).join('\n');
   const total = cart.reduce((a,i)=>a+i.price*i.qty,0);
-  const msg = `Hi, I want to order from FORME:\n\n${itemsText}\n\n*Total: ₹${total.toLocaleString('en-IN')}*\n\nPlease confirm and share UPI details for payment.`;
+  const msg = `Hi, I want to order from FORME:\n\nName: ${custName}\nPhone: ${custPhone}\n\n${itemsText}\n\n*Total: ₹${total.toLocaleString('en-IN')}*\n\nPlease confirm and share UPI details for payment.`;
   const cartSnapshot = [...cart];
 
-  logOrderToSheets(cartSnapshot, total).then(orderId => {
-    // Clear cart
+  logOrderToSheets(cartSnapshot, total, custName, custPhone).then(orderId => {
     cart = [];
     saveCart();
-    toggleCart(); // Close cart panel
+    toggleCart();
     window.open('https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent(msg),'_blank');
     showOrderConfirm(orderId);
   });
 }
-
 
 // ── ORDER CONFIRMATION ─────────────────────────────────────────────────────
 function showOrderConfirm(orderId) {
@@ -1628,6 +1688,29 @@ document.addEventListener('keydown', (e) => {
 <script>
 // Set email link — split so Cloudflare email scann
 </script>
+<!-- CUSTOMER DETAILS FORM -->
+<div class="cust-form-bg" id="cust-form-bg">
+  <div class="cust-form-box">
+    <h2 class="cf-title">Almost there!</h2>
+    <p class="cf-sub">Enter your details so we can confirm your order and reach you on WhatsApp.</p>
+    <div class="cf-order-summary" id="cf-summary"></div>
+    <div class="cf-field">
+      <label class="cf-label">Your Name</label>
+      <input class="cf-input" id="cf-name" type="text" placeholder="e.g. Rahul Sharma" maxlength="60">
+      <span class="cf-error" id="cf-name-err">Please enter your name</span>
+    </div>
+    <div class="cf-field">
+      <label class="cf-label">WhatsApp Number</label>
+      <input class="cf-input" id="cf-phone" type="tel" placeholder="e.g. 9876543210" maxlength="15">
+      <span class="cf-error" id="cf-phone-err">Please enter a valid 10-digit number</span>
+    </div>
+    <div class="cf-btns">
+      <button class="btn-wa-lg" id="cf-submit-btn" onclick="submitCustomerForm()">💬 Proceed to WhatsApp</button>
+      <button class="oc-close-btn" onclick="closeCustomerForm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- IMAGE LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="lightboxBgClick(event)">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
