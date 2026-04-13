@@ -492,6 +492,20 @@ footer{background:var(--blk);color:var(--wht);padding:40px 32px 24px}
 /* SKELETON SHIMMER */
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .prod-img-wrap[style*="shimmer"]{aspect-ratio:3/4}
+
+/* GENDER LABEL */
+.prod-gender{display:inline-flex;align-items:center;gap:4px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;padding:3px 8px;border-radius:2px;margin-bottom:6px}
+.prod-gender.men{background:#e8f0f8;color:#2563a8}
+.prod-gender.women{background:#fce8f3;color:#b02d7a}
+.prod-gender.unisex{background:#f0f0ec;color:#6b6560}
+
+/* GENDER FILTER ROW */
+.filter-gender{display:flex;gap:8px;justify-content:center;margin-bottom:10px}
+.gbtn{padding:8px 24px;border:1px solid var(--border);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;cursor:pointer;background:var(--wht);transition:all var(--tr);color:var(--textl)}
+.gbtn:hover{border-color:var(--blk);color:var(--blk)}
+.gbtn.act.men{background:#2563a8;color:#fff;border-color:#2563a8}
+.gbtn.act.women{background:#b02d7a;color:#fff;border-color:#b02d7a}
+.gbtn.act.all-g{background:var(--blk);color:#fff;border-color:var(--blk)}
 </style>
 </head>
 <body>
@@ -744,6 +758,13 @@ footer{background:var(--blk);color:var(--wht);padding:40px 32px 24px}
     <p id="shop-sub">Our complete collection</p>
   </div>
   <div style="padding:40px 32px;background:var(--wht)">
+    <!-- Gender filter -->
+    <div class="filter-gender">
+      <button class="gbtn act all-g" data-gender="all" onclick="genderFilter('all',this)">All</button>
+      <button class="gbtn men" data-gender="men" onclick="genderFilter('men',this)">♂ Men</button>
+      <button class="gbtn women" data-gender="women" onclick="genderFilter('women',this)">♀ Women</button>
+    </div>
+    <!-- Category filter -->
     <div class="filter-bar">
       <button class="fbtn act" data-cat="all" onclick="shopFilter('all',this)">All</button>
       <button class="fbtn" data-cat="office" onclick="shopFilter('office',this)">Office</button>
@@ -1133,6 +1154,11 @@ function showPage(pg, cat, fromHistory) {
   resetTrackPage();
   if (pg === 'home') renderHomeGrid();
   if (pg === 'shop') {
+    // Reset gender filter to All when entering shop
+    activeGender = 'all';
+    document.querySelectorAll('.gbtn').forEach(b => b.classList.remove('act'));
+    const allGbtn = document.querySelector('.gbtn[data-gender="all"]');
+    if (allGbtn) allGbtn.classList.add('act');
     renderShopGrid(cat||'all');
     setShopTitle(cat||'all');
     document.querySelectorAll('.fbtn').forEach(b => {
@@ -1182,6 +1208,18 @@ function setShopTitle(cat) {
     `<em style="font-style:italic;color:var(--accent-dark)">${last}</em>`;
   document.getElementById('shop-sub').textContent = s;
 }
+let activeGender = 'all'; // 'all' | 'men' | 'women'
+
+function genderFilter(gender, btn) {
+  activeGender = gender;
+  document.querySelectorAll('.gbtn').forEach(b => b.classList.remove('act'));
+  btn.classList.add('act');
+  // Re-render with current category + new gender
+  const activeCat = document.querySelector('.fbtn.act');
+  const cat = activeCat ? activeCat.dataset.cat : 'all';
+  renderShopGrid(cat);
+}
+
 function shopFilter(cat, btn) {
   document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('act'));
   btn.classList.add('act');
@@ -1206,6 +1244,12 @@ function prodCard(p) {
       }
     </div>
     <div class="prod-info">
+      ${p.gender && p.gender.toLowerCase() !== 'unisex'
+        ? `<span class="prod-gender ${p.gender.toLowerCase()}">${p.gender.toLowerCase() === 'men' ? '♂' : '♀'} ${p.gender}</span>`
+        : p.gender === 'Unisex' || p.gender === 'unisex'
+        ? `<span class="prod-gender unisex">⊕ Unisex</span>`
+        : ''
+      }
       <p class="prod-pid">${p.id}</p>
       <h3 class="prod-name">${p.name}</h3>
       <div class="prod-meta">
@@ -1249,7 +1293,14 @@ function renderHomeGrid() {
   g.innerHTML = featured.map(prodCard).join('');
 }
 function renderShopGrid(cat) {
-  const filtered = cat === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === cat);
+  let filtered = cat === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === cat);
+  // Apply gender filter if active
+  if (activeGender !== 'all') {
+    filtered = filtered.filter(p => {
+      const g = (p.gender || '').toLowerCase();
+      return g === activeGender || g === 'unisex' || g === '';
+    });
+  }
   document.getElementById('shop-grid').innerHTML = filtered.map(prodCard).join('');
 }
 
