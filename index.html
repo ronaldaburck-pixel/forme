@@ -58,22 +58,24 @@ img{max-width:100%;display:block}
 .hero{min-height:92vh;position:relative;display:flex;align-items:center;overflow:hidden}
 .hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(8,8,8,.80) 0%,rgba(8,8,8,.52) 55%,rgba(8,8,8,.18) 100%)}
-.hero-content{position:relative;z-index:2;padding:0 72px;max-width:720px}
-.hero-eye{font-size:13px;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.6);font-weight:400;margin-bottom:22px}
-.hero h1{font-family:var(--serif);font-size:clamp(56px,7.5vw,116px);font-weight:300;line-height:.92;letter-spacing:-.01em;margin-bottom:28px;color:#fff}
+.hero-content{position:relative;z-index:2;padding:0 72px;max-width:660px}
+.hero-eye{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:400;margin-bottom:20px}
+.hero h1{font-family:var(--serif);font-size:clamp(52px,7.5vw,112px);font-weight:300;line-height:.92;letter-spacing:-.01em;margin-bottom:0;color:#fff}
 .hero h1 em{font-style:italic;color:var(--accent)}
-.hero-sub{font-size:17px;color:rgba(255,255,255,.72);max-width:420px;line-height:1.8;margin-bottom:40px;font-weight:300}
-.hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:44px}
-.btn-hero-primary{display:inline-flex;align-items:center;gap:8px;background:var(--wht);color:var(--blk);padding:16px 32px;font-size:14px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;transition:all var(--tr);border:none;cursor:pointer;font-family:var(--sans)}
+/* Divider line below headline */
+.hero-divider{width:56px;height:1.5px;background:var(--accent);margin:22px 0}
+.hero-sub{font-size:16px;color:rgba(255,255,255,.68);max-width:400px;line-height:1.8;margin-bottom:20px;font-weight:300}
+/* Price line */
+.hero-price-line{margin-bottom:36px}
+.hero-price-from{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);font-weight:400;display:block;margin-bottom:4px}
+.hero-price-amt{font-family:var(--serif);font-size:clamp(38px,4.5vw,64px);font-weight:300;color:#fff;line-height:1;letter-spacing:-.01em}
+.hero-price-amt em{font-style:italic;color:var(--accent);font-size:.65em;vertical-align:super;margin-right:3px}
+/* Buttons */
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-hero-primary{display:inline-flex;align-items:center;gap:8px;background:var(--wht);color:var(--blk);padding:15px 30px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;transition:all var(--tr);border:none;cursor:pointer;font-family:var(--sans)}
 .btn-hero-primary:hover{background:var(--cream);transform:translateY(-2px)}
-.btn-hero-outline{display:inline-flex;align-items:center;gap:8px;border:1.5px solid rgba(255,255,255,.65);color:#fff;padding:16px 32px;font-size:14px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;transition:all var(--tr);cursor:pointer;font-family:var(--sans);background:transparent}
-.btn-hero-outline:hover{background:rgba(255,255,255,.15);transform:translateY(-2px)}
-/* Hero info card */
-.hero-card{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.25);padding:22px 28px;max-width:280px;backdrop-filter:blur(16px)}
-.hero-card-label{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:6px;font-weight:300;letter-spacing:.04em}
-.hero-card-price{font-size:36px;font-family:var(--serif);font-weight:400;color:#fff;margin-bottom:16px}
-.hero-badges{display:flex;gap:8px;flex-wrap:wrap}
-.hero-badge{font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.8)}
+.btn-hero-outline{display:inline-flex;align-items:center;gap:8px;border:1.5px solid rgba(255,255,255,.55);color:#fff;padding:15px 30px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;transition:all var(--tr);cursor:pointer;font-family:var(--sans);background:transparent}
+.btn-hero-outline:hover{background:rgba(255,255,255,.12);transform:translateY(-2px)}
 
 /* SHIPPING STRIP */
 .strip{background:var(--blk);color:var(--wht);padding:16px 32px;display:flex;justify-content:center;gap:48px;flex-wrap:wrap}
@@ -272,7 +274,7 @@ footer{background:var(--blk);color:var(--wht);padding:40px 32px 24px}
 @media(max-width:768px){
   .hnav{display:none}.hamburger{display:flex}
   .hero-content{padding:0 28px}
-  .hero h1{font-size:52px}
+  .hero h1{font-size:48px}
   .deals-content{padding:0 28px}
   .deals-dots{left:28px}
   .policy-grid{grid-template-columns:1fr}
@@ -338,7 +340,9 @@ footer{background:var(--blk);color:var(--wht);padding:40px 32px 24px}
 
 @media(max-width:480px){
   .hero-content{padding:0 20px}
-  .hero h1{font-size:40px}
+  .hero h1{font-size:36px}
+  .hero-price-amt{font-size:40px}
+  .hero-divider{margin:16px 0}
   .hero-btns{flex-direction:column}
   .btn-hero-primary,.btn-hero-outline{width:100%;justify-content:center}
   .prod-grid{grid-template-columns:repeat(2,1fr);gap:2px}
@@ -532,22 +536,15 @@ footer{background:var(--blk);color:var(--wht);padding:40px 32px 24px}
     <div class="hero-content">
       <p class="hero-eye">New Collection — 2025</p>
       <h1>Dress for<br>your <em>life,</em><br>not theirs.</h1>
+      <div class="hero-divider"></div>
       <p class="hero-sub">Premium clothing for every chapter. Crafted with intention, priced with honesty.</p>
+      <div class="hero-price-line">
+        <span class="hero-price-from">Starting from</span>
+        <span class="hero-price-amt"><em>₹</em>499</span>
+      </div>
       <div class="hero-btns">
         <button class="btn-hero-primary" onclick="smoothScroll('#lifestyle')">Shop by Lifestyle →</button>
         <button class="btn-hero-outline" onclick="showPage('shop','all')">View All Products</button>
-      </div>
-      <div class="hero-card">
-        <p class="hero-card-label">Starting from</p>
-        <p class="hero-card-price">₹499</p>
-        <div class="hero-badges">
-          <span class="hero-badge">🔒 UPI Only</span>
-          <span class="hero-badge">💬 WhatsApp</span>
-          <span class="hero-badge">↩ Exchange</span>
-        </div>
-        <p style="margin-top:14px;font-size:12px;color:rgba(255,255,255,.45);letter-spacing:.05em">
-          ⭐ 500+ orders delivered &nbsp;·&nbsp; Trusted Indian brand
-        </p>
       </div>
     </div>
   </section>
@@ -947,43 +944,24 @@ function bustUrl(url) {
 async function loadFromSheets() {
   if (!USE_SHEETS) return;
 
-  // Show loading indicator on grids
-  ['home-grid','shop-grid'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--mid);font-size:15px;letter-spacing:.1em">Loading products...</div>';
-  });
-
   try {
-    // cache:'no-store' bypasses browser cache WITHOUT triggering CORS preflight
-    // Never add custom headers to cross-origin requests — they trigger preflight
-    // which Google Apps Script cannot handle
-    const fetchFresh = (url) => fetch(bustUrl(url), {
-      cache: 'no-store'
-    });
+    // ONE single request instead of 3 sequential ones — 3x faster
+    // Apps Script returns products + deals + settings in one response
+    const res  = await fetch(bustUrl(SHEET_API + '?action=all'), { cache: 'no-store' });
+    const data = await res.json();
 
-    // Load products
-    const prodRes  = await fetchFresh(SHEET_API + '?action=products');
-    const prodData = await prodRes.json();
-    if (prodData.success && prodData.data.length > 0) {
-      PRODUCTS = prodData.data;
+    if (data.products && data.products.length > 0) {
+      PRODUCTS = data.products;
     }
-
-    // Load deals
-    const dealRes  = await fetchFresh(SHEET_API + '?action=deals');
-    const dealData = await dealRes.json();
-    if (dealData.success && dealData.data.length > 0) {
-      DEALS_DATA = dealData.data;
+    if (data.deals && data.deals.length > 0) {
+      DEALS_DATA = data.deals;
     }
-
-    // Load settings
-    const settRes  = await fetchFresh(SHEET_API + '?action=settings');
-    const settData = await settRes.json();
-    if (settData.success) {
-      applySettings(settData.data);
+    if (data.settings) {
+      applySettings(data.settings);
     }
 
   } catch(err) {
-    console.warn('Sheets not available, using local data:', err.message);
+    console.warn('Sheets not available:', err.message);
   }
   // Note: renderHomeGrid() is called by the caller after this resolves
 }
@@ -1019,8 +997,8 @@ function applySettings(s) {
     if (el) el.textContent = s.hero_sub;
   }
   if (s.hero_price) {
-    const el = document.querySelector('.hero-card-price');
-    if (el) el.textContent = '₹' + s.hero_price;
+    const el = document.querySelector('.hero-price-amt');
+    if (el) el.innerHTML = '<em>₹</em>' + s.hero_price;
   }
 }
 
@@ -1147,7 +1125,7 @@ function resetTrackPage() {
   if (st) { st.textContent = ''; st.className = 'tr-status'; }
 }
 
-function showPage(pg, cat) {
+function showPage(pg, cat, fromHistory) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('pg-'+pg).classList.add('active');
   window.scrollTo(0,0);
@@ -1162,7 +1140,25 @@ function showPage(pg, cat) {
       if (b.dataset.cat === (cat||'all')) b.classList.add('act');
     });
   }
+  // Push to browser history so back button works
+  // URL stays clean — no query params, no page names exposed
+  // fromHistory=true means called BY back button — don't push again
+  if (!fromHistory) {
+    const state = { pg, cat: cat||null };
+    // Always keep clean URL — only update history state, not visible URL
+    history.pushState(state, '', window.location.pathname);
+  }
 }
+
+// Handle browser back/forward button
+window.addEventListener('popstate', (e) => {
+  if (e.state && e.state.pg) {
+    showPage(e.state.pg, e.state.cat || undefined, true);
+  } else {
+    // No state = back to very beginning = go home
+    showPage('home', undefined, true);
+  }
+});
 function smoothScroll(sel) {
   const el = document.querySelector(sel);
   if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
@@ -1723,6 +1719,9 @@ window.addEventListener('pageshow', (e) => {
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 saveCart();
+
+// Push initial home state so back button has somewhere to go
+history.replaceState({ pg: 'home', cat: null }, '', window.location.pathname);
 
 // ── LOADER LOGIC ──────────────────────────────────────────────────────────
 // Show loader only on first visit of a session (not on every refresh)
